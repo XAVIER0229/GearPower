@@ -1200,6 +1200,7 @@ namespace GearPower
 
             if (!DisplaySettings.BluetoothEnabled)
                 display = display.Where(r => !r.IsBluetooth).ToList();
+            NameOverrides.Apply(display);
 
             lastReadings = display;
             lastInventory = result.Inventory;
@@ -1443,22 +1444,45 @@ namespace GearPower
             Grid.SetColumn(titleStack, 1);
             header.Children.Add(titleStack);
 
+            var actions = new StackPanel();
+            actions.Orientation = Orientation.Horizontal;
+            actions.VerticalAlignment = VerticalAlignment.Center;
+            actions.HorizontalAlignment = HorizontalAlignment.Right;
+            Grid.SetColumn(actions, 2);
+            header.Children.Add(actions);
+
+            var rename = new Button();
+            Style ghost = window.TryFindResource("GhostButton") as Style;
+            if (ghost != null) rename.Style = ghost;
+            rename.Content = "\uE70F";
+            rename.FontFamily = Theme.IconFont;
+            rename.FontSize = 11;
+            rename.Width = 24;
+            rename.Height = 24;
+            rename.Padding = new Thickness(0);
+            rename.Foreground = Theme.Muted;
+            rename.BorderBrush = Theme.PanelBorder;
+            rename.BorderThickness = new Thickness(1);
+            rename.ToolTip = "重命名设备（只改显示名称）";
+            System.Windows.Automation.AutomationProperties.SetName(rename, "重命名设备");
+            rename.Click += (s, e) => RenameDevice(reading);
+            actions.Children.Add(rename);
+
             if (disconnected)
             {
                 var delete = new Button();
-                Style ghost = window.TryFindResource("GhostButton") as Style;
                 if (ghost != null) delete.Style = ghost;
                 delete.Content = "删除";
                 delete.FontSize = 9;
                 delete.Padding = new Thickness(7, 3, 7, 3);
+                delete.Margin = new Thickness(6, 0, 0, 0);
                 delete.Foreground = Theme.Muted;
                 delete.BorderBrush = Theme.PanelBorder;
                 delete.BorderThickness = new Thickness(1);
                 delete.VerticalAlignment = VerticalAlignment.Center;
                 delete.ToolTip = "从历史设备中删除这张卡片";
                 delete.Click += (s, e) => DeleteHistoryCard(reading);
-                Grid.SetColumn(delete, 2);
-                header.Children.Add(delete);
+                actions.Children.Add(delete);
             }
             else
             {
@@ -1476,13 +1500,13 @@ namespace GearPower
                     badge.BorderThickness = new Thickness(1);
                     badge.Padding = new Thickness(6, 2, 6, 2);
                     badge.VerticalAlignment = VerticalAlignment.Center;
+                    badge.Margin = new Thickness(6, 0, 0, 0);
                     var badgeLabel = new TextBlock();
                     badgeLabel.Text = badgeText;
                     badgeLabel.FontSize = 9;
                     badgeLabel.Foreground = new SolidColorBrush(badgeColor);
                     badge.Child = badgeLabel;
-                    Grid.SetColumn(badge, 2);
-                    header.Children.Add(badge);
+                    actions.Children.Add(badge);
                 }
             }
             root.Children.Add(header);
@@ -1594,13 +1618,44 @@ namespace GearPower
             root.Children.Add(footer);
 
             card.Child = root;
+            var menu = new ContextMenu();
+            var renameItem = new MenuItem();
+            renameItem.Header = "重命名设备…";
+            renameItem.Click += (s, e) => RenameDevice(reading);
+            menu.Items.Add(renameItem);
+            if (disconnected)
+            {
+                menu.Items.Add(new Separator());
+                var deleteItem = new MenuItem();
+                deleteItem.Header = "从历史设备中删除";
+                deleteItem.Click += (s, e) => DeleteHistoryCard(reading);
+                menu.Items.Add(deleteItem);
+            }
+            card.ContextMenu = menu;
             return card;
+        }
+
+        private void RenameDevice(DeviceReading reading)
+        {
+            if (reading == null || demoMode) return;
+            string renamed = RenameWindow.Show(window, reading.Name, reading.Id);
+            if (renamed == null) return;
+            if (renamed.Length == 0) NameOverrides.Remove(reading.Id);
+            else NameOverrides.Set(reading.Id, renamed);
+
+            NameOverrides.Apply(lastReadings);
+            NameOverrides.Apply(lastConnectedReadings);
+            RenderCards(lastReadings);
+            if (tray != null) tray.Update(lastConnectedReadings);
+            if (taskbarWidget != null) taskbarWidget.Update(lastConnectedReadings);
+            ShowToast(renamed.Length == 0 ? "已恢复默认设备名称" : "设备已重命名为 " + renamed);
         }
 
         private void DeleteHistoryCard(DeviceReading reading)
         {
             if (reading == null || !reading.Disconnected) return;
             DeviceHistory.Remove(reading.Id);
+            NameOverrides.Remove(reading.Id);
             lastReadings.RemoveAll(r => string.Equals(r.Id, reading.Id, StringComparison.OrdinalIgnoreCase));
             RenderCards(lastReadings);
             UpdateSummary();

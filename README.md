@@ -19,6 +19,7 @@ Windows 10/11 · .NET Framework 4.8 · 单文件 · 本地读取，不联网
 - **接收器在线也能看到设备**：设备关机或休眠时保留卡片，显示「设备休眠」，唤醒后刷新即可。
 - **休眠保留上次电量**：设备进入休眠后会继续显示最后一次成功读取的电量和时间，并用淡色环 +「上次读数」标注；缓存保留 30 天。
 - **历史设备**：连接过本机的设备会保留卡片并标记「未连接」；未连接卡片可单独删除，历史不会进入托盘或任务栏。数据保存在 `%LOCALAPPDATA%\GearPower\device-history.tsv`。
+- **设备重命名**：卡片右上角铅笔或右键「重命名设备」，可覆盖厂商/系统返回的错误名称；只改显示名，不影响 VID/PID 和协议，支持恢复默认。
 - **设备清单**：按键盘、鼠标、耳机、麦克风、拓展坞等类型分组，同一物理设备的多接口合并；每个设备组可复制「诊断」或「复制给 Agent」，点击单个接口行可复制该接口诊断。
 - **设备适配**：新增「设备适配」页签，可从已连接接口生成 JSON 草稿、编辑、测试、导入启用、导出和移除；配置支持声明式查询、校验和、字段位解析和条件。
 - **实时日志**：设置页「实时日志」窗口显示最近 1000 行，可刷新、清空、导出。
@@ -281,7 +282,7 @@ GearPower.exe --tray-preview  生成托盘电池预览图
 
 ## 构建
 
-当前版本：**1.2.6**。需要 Windows 10/11 自带的 .NET Framework 4.8 与 `csc.exe`（无需 Visual Studio / .NET SDK）。
+当前版本：**1.2.7**。需要 Windows 10/11 自带的 .NET Framework 4.8 与 `csc.exe`（无需 Visual Studio / .NET SDK）。
 
 ```powershell
 git clone https://github.com/XAVIER0229/GearPower.git
@@ -381,7 +382,7 @@ Razer、ASUS ROG、HyperX、ATK、VXE、Lamzu、Logitech 等名称和商标归�
 
 ## 版本
 
-当前公开版本 **1.2.6**，变更见 [CHANGELOG.md](CHANGELOG.md)。当前发布说明见 [docs/releases](docs/releases/)，历史版本折叠归档在 [docs/releases/archive](docs/releases/archive/)。
+当前公开版本 **1.2.7**，变更见 [CHANGELOG.md](CHANGELOG.md)。当前发布说明见 [docs/releases](docs/releases/)，历史版本折叠归档在 [docs/releases/archive](docs/releases/archive/)。
 
 ## License
 

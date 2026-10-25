@@ -210,6 +210,7 @@ namespace GearPower
                 List<string> profileErrors;
                 List<DeviceProfile> embeddedProfiles = ProfileStore.Load(out profileErrors);
                 DeviceProfile profile = embeddedProfiles.FirstOrDefault(p => p.id == "hjsdzhi-s1-v2");
+                check("name override path", !string.IsNullOrEmpty(NameOverrides.StoragePath));
                 check("embedded profile preset exists", profile != null);
                 if (profile != null)
                 {

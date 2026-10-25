@@ -139,6 +139,7 @@ namespace GearPower
             var reading = new DeviceReading();
             reading.Id = entry.Id;
             reading.Name = entry.Name;
+            reading.OriginalName = entry.Name;
             reading.Vendor = entry.Vendor;
             reading.Kind = entry.Kind;
             reading.Transport = entry.Transport;

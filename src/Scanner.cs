@@ -136,6 +136,7 @@ namespace GearPower
                     var reading = new DeviceReading();
                     reading.Id = "bt:" + (string.IsNullOrEmpty(info.ContainerId) ? info.InstanceId : info.ContainerId);
                     reading.Name = info.Name;
+                    reading.OriginalName = info.Name;
                     reading.Vendor = "蓝牙";
                     reading.Kind = info.Kind;
                     reading.Transport = "蓝牙";
@@ -230,6 +231,7 @@ namespace GearPower
             var reading = new DeviceReading();
             reading.Id = group.Key;
             reading.Name = string.IsNullOrEmpty(probe.ModelName) ? group.Name : probe.ModelName;
+            reading.OriginalName = reading.Name;
             reading.Vendor = group.Vendor;
             reading.Kind = group.Kind;
             reading.Transport = L10n.Transport(group.Vid, group.Pid, group.Product, group.Bluetooth);

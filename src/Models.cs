@@ -28,6 +28,7 @@ namespace GearPower
     {
         public string Id;
         public string Name;
+        public string OriginalName;
         public string Vendor;
         public DeviceKind Kind;
         public string Transport;
