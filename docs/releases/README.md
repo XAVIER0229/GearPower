@@ -4,15 +4,16 @@
 
 ## 当前版本
 
-- [GearPower v1.2.7](RELEASE_NOTES_v1.2.7.md) — 设备名称自定义
+- [GearPower v1.2.8](RELEASE_NOTES_v1.2.8.md) — 开机自启动与首次功能引导
 
 ## 历史版本
 
 <details>
-<summary>展开查看 v1.1.x – v1.2.6 的历史发布说明</summary>
+<summary>展开查看 v1.1.x – v1.2.7 的历史发布说明</summary>
 
 | 版本 | 类型 | 说明 |
 | --- | --- | --- |
+| [v1.2.7](archive/RELEASE_NOTES_v1.2.7.md) | 正式版 | 设备名称自定义 |
 | [v1.2.6](archive/RELEASE_NOTES_v1.2.6.md) | 正式版 | Flydigi Vader 5 Pro 控制器适配 |
 | [v1.2.5](archive/RELEASE_NOTES_v1.2.5.md) | 正式版 | 首页蓝牙设备电量开关 |
 | [v1.2.4](archive/RELEASE_NOTES_v1.2.4.md) | 正式版 | 随附协议内嵌、设备命名明确 |

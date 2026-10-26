@@ -584,6 +584,29 @@
               <Border Background="{DynamicResource SummaryBrush}" BorderBrush="{DynamicResource SummaryBorderBrush}"
                       BorderThickness="1" CornerRadius="16" Padding="18" Margin="0,14,0,0">
                 <StackPanel>
+                  <TextBlock Text="启动" FontSize="13" FontWeight="SemiBold"/>
+                  <Grid Margin="0,12,0,0">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*"/>
+                      <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Center">
+                      <TextBlock Text="开机自动启动" FontSize="11.5"/>
+                      <TextBlock Text="登录 Windows 后正常显示主窗口、托盘和任务栏电量条" FontSize="10"
+                                 Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0"/>
+                    </StackPanel>
+                    <ToggleButton x:Name="AutoStartSwitch" Grid.Column="1" Style="{StaticResource IosSwitch}"
+                                  AutomationProperties.Name="开机自动启动" VerticalAlignment="Center"/>
+                  </Grid>
+                  <Button x:Name="GuideButton" Style="{StaticResource GhostButton}"
+                          Content="重新查看功能引导" Padding="12,6" FontSize="10.5"
+                          HorizontalAlignment="Left" Margin="0,12,0,0"/>
+                </StackPanel>
+              </Border>
+
+              <Border Background="{DynamicResource SummaryBrush}" BorderBrush="{DynamicResource SummaryBorderBrush}"
+                      BorderThickness="1" CornerRadius="16" Padding="18" Margin="0,14,0,0">
+                <StackPanel>
                   <Grid>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                       <TextBlock Text="任务栏电量条" FontSize="13" FontWeight="SemiBold"/>

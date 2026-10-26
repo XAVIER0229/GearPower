@@ -65,6 +65,8 @@ namespace GearPower
         private readonly ToggleButton trayEnabledSwitch;
         private readonly ToggleButton hoverEnabledSwitch;
         private readonly ToggleButton bluetoothEnabledSwitch;
+        private readonly ToggleButton autoStartSwitch;
+        private readonly Button guideButton;
         private readonly Button closeAskOption;
         private readonly Button closeTrayOption;
         private readonly Button closeExitOption;
@@ -162,6 +164,8 @@ namespace GearPower
             trayEnabledSwitch = Find<ToggleButton>("TrayEnabledSwitch");
             hoverEnabledSwitch = Find<ToggleButton>("HoverEnabledSwitch");
             bluetoothEnabledSwitch = Find<ToggleButton>("BluetoothEnabledSwitch");
+            autoStartSwitch = Find<ToggleButton>("AutoStartSwitch");
+            guideButton = Find<Button>("GuideButton");
             closeAskOption = Find<Button>("CloseAskOption");
             closeTrayOption = Find<Button>("CloseTrayOption");
             closeExitOption = Find<Button>("CloseExitOption");
@@ -229,6 +233,8 @@ namespace GearPower
             trayEnabledSwitch.Click += (s, e) => SetTrayEnabled(trayEnabledSwitch.IsChecked == true);
             hoverEnabledSwitch.Click += (s, e) => SetHoverEnabled(hoverEnabledSwitch.IsChecked == true);
             bluetoothEnabledSwitch.Click += (s, e) => SetBluetoothEnabled(bluetoothEnabledSwitch.IsChecked == true);
+            autoStartSwitch.Click += (s, e) => SetAutoStart(autoStartSwitch.IsChecked == true);
+            guideButton.Click += (s, e) => FirstRunGuide.Show(window);
             closeAskOption.Click += (s, e) => SetCloseAction(0);
             closeTrayOption.Click += (s, e) => SetCloseAction(1);
             closeExitOption.Click += (s, e) => SetCloseAction(2);
@@ -382,6 +388,7 @@ namespace GearPower
                 taskbarWidget.Update(lastConnectedReadings);
                 taskbarWidget.SetMode(taskbarMode);
             }
+            bool showGuide = !demoMode && FirstRunGuide.ShouldShow();
             if (demoMode)
             {
                 ApplyResult(BuildDemoResult());
@@ -389,6 +396,17 @@ namespace GearPower
             }
             Scan();
             if (refreshSeconds > 0) refreshTimer.Start();
+            if (showGuide)
+            {
+                var guideTimer = new DispatcherTimer();
+                guideTimer.Interval = TimeSpan.FromMilliseconds(1200);
+                guideTimer.Tick += (s, args) =>
+                {
+                    guideTimer.Stop();
+                    FirstRunGuide.Show(window);
+                };
+                guideTimer.Start();
+            }
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -770,6 +788,7 @@ namespace GearPower
 
         private void LoadSettings()
         {
+            AutoStart.RepairIfEnabled();
             object value = ReadRefreshSeconds(@"Software\GearPower");
             if (value == null) value = ReadRefreshSeconds(@"Software\BatteryPeek");
             if (value is int)
@@ -949,6 +968,18 @@ namespace GearPower
             ShowToast(enabled ? "蓝牙设备电量显示已开启" : "蓝牙设备电量显示已关闭");
         }
 
+        private void SetAutoStart(bool enabled)
+        {
+            if (!AutoStart.SetEnabled(enabled))
+            {
+                ShowToast("开机自动启动设置失败，请检查当前用户权限");
+                RefreshSettingsState();
+                return;
+            }
+            RefreshSettingsState();
+            ShowToast(enabled ? "已开启开机自动启动" : "已关闭开机自动启动");
+        }
+
         private void SetCloseAction(int action)
         {
             if (action == 1 && (!trayEnabled || lowIntegrity))
@@ -996,6 +1027,8 @@ namespace GearPower
             hoverEnabledSwitch.ToolTip = hoverAvailable ? "悬停显示电量卡片" : "需要先开启托盘图标";
             bluetoothEnabledSwitch.IsChecked = DisplaySettings.BluetoothEnabled;
             bluetoothEnabledSwitch.ToolTip = "读取并显示蓝牙耳机、键盘等设备的电量";
+            autoStartSwitch.IsChecked = AutoStart.IsEnabled();
+            autoStartSwitch.ToolTip = "登录 Windows 后正常显示主窗口、托盘和任务栏电量条";
 
             bool closeChoices = trayEnabled && !lowIntegrity;
             if (!closeChoices) closeAction = 2;
