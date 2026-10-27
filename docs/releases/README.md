@@ -4,6 +4,7 @@
 
 ## 当前版本
 
+- [GearPower v2.0.1](RELEASE_NOTES_v2.0.1.md) — 兼容 PR #15 的历史与蓝牙修复
 - [GearPower v2.0.0](RELEASE_NOTES_v2.0.0.md) — Qiju Soft UI 完整重制
 
 ## 历史版本

@@ -1419,18 +1419,20 @@ namespace GearPower
 
             if (disconnected)
             {
-                if (lastConnectedReadings.Any(r => DeviceIdentity.CanConfirmMerge(reading, r)))
+                if (!demoMode && lastConnectedReadings.Any(r => DeviceIdentity.CanConfirmMerge(reading, r)))
                 {
                     var merge = new Button();
                     if (ghost != null) merge.Style = ghost;
                     merge.Content = "合并";
-                    merge.Padding = new Thickness(6, 2, 6, 2);
+                    merge.FontSize = 9;
+                    merge.Height = 24;
+                    merge.Padding = new Thickness(7, 2, 7, 2);
                     merge.Margin = new Thickness(6, 0, 0, 0);
                     merge.Foreground = Theme.Muted;
                     merge.BorderBrush = Theme.PanelBorder;
                     merge.BorderThickness = new Thickness(1);
                     merge.ToolTip = "确认这条旧记录与某个当前设备属于同一物理设备";
-                    merge.Click += (s, e) => ShowHistoryMergeMenu(reading, merge);
+                    merge.Click += (s, e) => ShowHistoryMergeMenu(reading);
                     actions.Children.Add(merge);
                 }
                 var delete = new Button();
@@ -1667,34 +1669,19 @@ namespace GearPower
             ShowToast("已从历史设备中删除 " + reading.Name);
         }
 
-        private void ShowHistoryMergeMenu(DeviceReading history, Button button)
+        private void ShowHistoryMergeMenu(DeviceReading history)
         {
             var candidates = lastConnectedReadings.Where(r => DeviceIdentity.CanConfirmMerge(history, r)).ToList();
-            if (candidates.Count == 1) { MergeHistoryCard(history, candidates[0]); return; }
-            var menu = new ContextMenu();
-            foreach (DeviceReading candidate in candidates)
-            {
-                DeviceReading target = candidate;
-                var item = new MenuItem();
-                item.Header = target.Name + " · " + target.Id;
-                item.Click += (s, e) => MergeHistoryCard(history, target);
-                menu.Items.Add(item);
-            }
-            menu.PlacementTarget = button;
-            menu.IsOpen = true;
+            if (candidates.Count == 0) return;
+            DeviceReading target = HistoryMergeWindow.Show(window, history, candidates);
+            if (target != null) MergeHistoryCard(history, target);
         }
 
         private void MergeHistoryCard(DeviceReading history, DeviceReading connected)
         {
             if (demoMode || !lastConnectedReadings.Contains(connected)
                 || lastConnectedReadings.Any(r => string.Equals(r.Id, history.Id, StringComparison.OrdinalIgnoreCase))) return;
-            if (MessageBox.Show(window,
-                "确认这条历史记录和当前连接的「" + connected.Name + "」是同一台设备？\n\n"
-                + "确认后只保留当前设备卡片和最新电量，保留当前自定义名称；"
-                + "如果当前没有自定义名称，则继承旧名称。原始历史文件会先备份。"
-                + "\n\n如果是两台同型号设备，请选择“否”。",
-                "合并同一设备的历史记录", MessageBoxButton.YesNo, MessageBoxImage.Question,
-                MessageBoxResult.No) != MessageBoxResult.Yes) return;
+            
             try
             {
                 if (!DeviceHistory.MergeConfirmed(history.Id, connected)) return;
