@@ -86,6 +86,7 @@ namespace GearPower
             new LamzuProtocol(),
             new HyperXProtocol(),
             new LogitechProtocol(),
+            new AppleWirelessKeyboardProtocol(),
             new GenericHidBatteryProtocol(),
             new AppleKeyboardProtocol()
         };
@@ -1292,7 +1293,26 @@ namespace GearPower
             if (result == null) return null;
             string name = ReadDeviceName(shortH, longH, dev);
             if (!string.IsNullOrEmpty(name)) result.ModelName = name;
+            // Read-only device information, independent of the Windows USB port.
+            // Protocol reference: Solaar hidpp20.py get_ids (no source copied).
+            int identityFeature = FeatureIndex(shortH, longH, dev, 0x0003);
+            if (identityFeature > 0)
+                result.HardwareId = ParseHardwareId(CallLong(shortH, longH, dev,
+                    (byte)identityFeature, 0x00, 0, 0, 0, 260));
             return result;
+        }
+
+        public static string ParseHardwareId(byte[] report)
+        {
+            // Long HID++ header is four bytes. Payload: entity count, unit id
+            // (4 bytes), reserved, transport, model id (6 bytes).
+            if (report == null || report.Length < 17 || report[0] != LongReport) return null;
+            bool zeroUnit = true, ffUnit = true, zeroModel = true, ffModel = true;
+            for (int i = 5; i < 9; i++) { zeroUnit &= report[i] == 0; ffUnit &= report[i] == 255; }
+            for (int i = 11; i < 17; i++) { zeroModel &= report[i] == 0; ffModel &= report[i] == 255; }
+            if (zeroUnit || ffUnit || zeroModel || ffModel) return null;
+            return "hidpp:" + BitConverter.ToString(report, 11, 6).Replace("-", "")
+                + ":" + BitConverter.ToString(report, 5, 4).Replace("-", "");
         }
 
         private static string ReadDeviceName(HidHandle shortH, HidHandle longH, byte dev)
@@ -1489,7 +1509,7 @@ namespace GearPower
                     percent = ReadInput(iface, field);
                 }
                 if (!percent.HasValue) continue;
-                return Result(percent, false, percent.Value >= 100, false, Name,
+                return Result(percent, false, false, false, Name,
                     field.ReportType + " 报告 " + field.ReportId + " · 位偏移 " + field.BitOffset);
             }
             return null;
@@ -1498,7 +1518,9 @@ namespace GearPower
         private static int? ReadFeature(HidInterfaceInfo iface, HidValueCap field)
         {
             string error;
-            using (HidHandle handle = HidHandle.Open(iface.Path, true, out error))
+            // Feature queries do not require read/write access. Windows often
+            // holds mouse/keyboard input collections exclusively.
+            using (HidHandle handle = HidHandle.Open(iface.Path, false, out error))
             {
                 if (handle == null) return null;
                 var buffer = new byte[iface.FeatureLength];
@@ -1555,3 +1577,4 @@ namespace GearPower
         }
     }
 }
+

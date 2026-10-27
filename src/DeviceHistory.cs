@@ -29,6 +29,7 @@ namespace GearPower
             public ushort Vid;
             public ushort Pid;
             public string Path;
+            public string HardwareId;
         }
 
         private static readonly Dictionary<string, Entry> Entries =
@@ -81,16 +82,27 @@ namespace GearPower
             var connected = (current ?? new List<DeviceReading>()).Where(r => r != null).ToList();
             lock (Gate)
             {
-                var connectedIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var connectedIds = new HashSet<string>(connected.Where(r => !string.IsNullOrEmpty(r.Id)).Select(r => r.Id), StringComparer.OrdinalIgnoreCase);
                 foreach (DeviceReading reading in connected)
                 {
                     if (string.IsNullOrEmpty(reading.Id)) continue;
                     connectedIds.Add(reading.Id);
 
+                    // Migrate a history card only with positive hardware
+                    // identity. Old name-only entries require confirmation.
+                    var sameHardware = Entries.Values.Where(e => !connectedIds.Contains(e.Id)
+                        && DeviceIdentity.SameHardware(ToReading(e), reading)).OrderByDescending(e => e.LastSeen).ToList();
+                    if (sameHardware.Count > 0) BackupBeforeMigration();
+                    foreach (Entry old in sameHardware)
+                    {
+                        CopyCustomName(old.Id, reading.Id);
+                        Entries.Remove(old.Id);
+                    }
+
                     Entry entry;
                     if (!Entries.TryGetValue(reading.Id, out entry))
                     {
-                        entry = new Entry();
+                        entry = sameHardware.FirstOrDefault() ?? new Entry();
                         entry.Id = reading.Id;
                     }
 
@@ -110,6 +122,8 @@ namespace GearPower
                     entry.Vid = reading.Vid;
                     entry.Pid = reading.Pid;
                     if (!string.IsNullOrEmpty(reading.Path)) entry.Path = reading.Path;
+                    if (!string.IsNullOrEmpty(reading.HardwareId)) entry.HardwareId = reading.HardwareId;
+                    else reading.HardwareId = entry.HardwareId;
                     Entries[reading.Id] = entry;
                 }
 
@@ -134,6 +148,36 @@ namespace GearPower
             }
         }
 
+        public static bool MergeConfirmed(string historicalId, DeviceReading connected)
+        {
+            if (connected == null || string.IsNullOrEmpty(historicalId)) return false;
+            lock (Gate)
+            {
+                Entry old;
+                if (!Entries.TryGetValue(historicalId, out old)
+                    || !DeviceIdentity.CanConfirmMerge(ToReading(old), connected)) return false;
+                BackupBeforeMigration();
+                CopyCustomName(old.Id, connected.Id);
+                Entries.Remove(old.Id);
+                Save();
+                return true;
+            }
+        }
+
+        private static void CopyCustomName(string oldId, string currentId)
+        {
+            string oldName = NameOverrides.Get(oldId);
+            if (!string.IsNullOrEmpty(oldName) && string.IsNullOrEmpty(NameOverrides.Get(currentId)))
+                NameOverrides.Set(currentId, oldName);
+        }
+
+        private static void BackupBeforeMigration()
+        {
+            if (string.IsNullOrEmpty(FilePath) || !File.Exists(FilePath)) return;
+            string backup = FilePath + ".before-identity-migration.bak";
+            if (!File.Exists(backup)) File.Copy(FilePath, backup, false);
+        }
+
         private static DeviceReading ToReading(Entry entry)
         {
             var reading = new DeviceReading();
@@ -155,6 +199,7 @@ namespace GearPower
             reading.Vid = entry.Vid;
             reading.Pid = entry.Pid;
             reading.Path = entry.Path;
+            reading.HardwareId = entry.HardwareId;
             reading.Note = "历史设备，最后连接 " + entry.LastSeen.ToString("yyyy-MM-dd HH:mm");
             return reading;
         }
@@ -181,7 +226,7 @@ namespace GearPower
                               entry.Vid.ToString(CultureInfo.InvariantCulture) + "\t" +
                               entry.Pid.ToString(CultureInfo.InvariantCulture) + "\t" +
                               Escape(entry.Path) + "\t" +
-                              (entry.IsBluetooth ? "1" : "0"));
+                              (entry.IsBluetooth ? "1" : "0") + "\t" + Escape(entry.HardwareId));
                 }
                 File.WriteAllLines(FilePath, lines, Encoding.UTF8);
             }
@@ -231,6 +276,7 @@ namespace GearPower
                     entry.Pid = pid;
                     entry.Path = parts[12];
                     entry.IsBluetooth = parts.Length > 13 && parts[13] == "1";
+                    entry.HardwareId = parts.Length > 14 ? parts[14] : null;
                     Entries[entry.Id] = entry;
                 }
             }
@@ -246,3 +292,4 @@ namespace GearPower
         }
     }
 }
+

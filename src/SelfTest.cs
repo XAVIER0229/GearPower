@@ -66,6 +66,94 @@ namespace GearPower
                 appleGroup.Interfaces[0].Vid = 0x046D;
                 appleGroup.Interfaces[0].Pid = 0x026C;
                 check("apple excludes other vendors", !new AppleKeyboardProtocol().Matches(appleGroup));
+                var legacy = new AppleWirelessKeyboardProtocol();
+                var legacyGroup = new DeviceGroup { Bluetooth = true };
+                var legacyInterface = new HidInterfaceInfo { Vid = 0x05AC, Pid = 0x0255, UsagePage = 0x0C, InputLength = 2 };
+                legacyGroup.Interfaces.Add(legacyInterface);
+                check("legacy apple matches 0255 bluetooth", legacy.Matches(legacyGroup));
+                legacyGroup.Bluetooth = false;
+                check("legacy apple excludes wired devices", !legacy.Matches(legacyGroup));
+                legacyGroup.Bluetooth = true;
+                legacyInterface.Pid = 0x026C;
+                check("legacy apple preserves Magic Keyboard protocol", !legacy.Matches(legacyGroup));
+                legacyInterface.Pid = 0x0256;
+                check("legacy apple excludes unverified models", !legacy.Matches(legacyGroup));
+                legacyInterface.Pid = 0x0255;
+                legacyInterface.Vid = 0x046D;
+                check("legacy apple excludes other vendors", !legacy.Matches(legacyGroup));
+                legacyInterface.Vid = 0x05AC;
+                legacyInterface.ValueCaps.Add(new HidValueCap { ReportType = HidReportType.Input,
+                    ReportId = 0x47, UsagePage = 0x06, Usage = 0x20, BitSize = 8, ReportCount = 1,
+                    LogicalMin = 0, LogicalMax = 255 });
+                check("legacy apple finds input47 battery descriptor", AppleWirelessKeyboardProtocol.HasBatteryReport(legacyInterface));
+                legacyInterface.ValueCaps[0].ReportId = 9;
+                check("legacy apple ignores unrelated feature09", !AppleWirelessKeyboardProtocol.HasBatteryReport(legacyInterface));
+                legacyInterface.ValueCaps[0].ReportId = 0x47;
+                bool allPercentages = true;
+                for (int level = 0; level <= 100; level++)
+                    allPercentages &= AppleWirelessKeyboardProtocol.ParseBattery(new byte[] { 0x47, (byte)level }) == level;
+                check("legacy apple preserves every percent 0 through 100", allPercentages);
+                bool invalidLevels = true;
+                for (int level = 101; level <= 255; level++)
+                    invalidLevels &= !AppleWirelessKeyboardProtocol.ParseBattery(new byte[] { 0x47, (byte)level }).HasValue;
+                check("legacy apple rejects every value 101 through 255", invalidLevels);
+                check("legacy apple rejects null", !AppleWirelessKeyboardProtocol.ParseBattery(null).HasValue);
+                check("legacy apple rejects empty", !AppleWirelessKeyboardProtocol.ParseBattery(new byte[0]).HasValue);
+                check("legacy apple rejects truncated", !AppleWirelessKeyboardProtocol.ParseBattery(new byte[] { 0x47 }).HasValue);
+                check("legacy apple rejects wrong report", !AppleWirelessKeyboardProtocol.ParseBattery(new byte[] { 0x09, 85 }).HasValue);
+                check("legacy apple rejects untouched sentinel", !AppleWirelessKeyboardProtocol.ParseBattery(new byte[] { 0x47, 255 }).HasValue);
+                check("legacy apple accepts padded feature length", AppleWirelessKeyboardProtocol.ParseBattery(new byte[] { 0x47, 85, 0, 0 }) == 85);
+                byte[] identityReport = new byte[20];
+                identityReport[0] = 0x11;
+                identityReport[5] = 0x12; identityReport[6] = 0x34;
+                identityReport[7] = 0x56; identityReport[8] = 0x78;
+                identityReport[11] = 0xC5; identityReport[12] = 0x47;
+                string hardwareId = LogitechProtocol.ParseHardwareId(identityReport);
+                check("hidpp identity includes model and unit", hardwareId == "hidpp:C54700000000:12345678");
+                check("hidpp rejects truncated identity", LogitechProtocol.ParseHardwareId(new byte[16]) == null);
+                check("hidpp rejects empty identity", LogitechProtocol.ParseHardwareId(new byte[20]) == null);
+                identityReport[0] = 0x10;
+                check("hidpp rejects short report identity", LogitechProtocol.ParseHardwareId(identityReport) == null);
+                identityReport[0] = 0x11;
+                for (int i = 5; i < 9; i++) identityReport[i] = 0;
+                check("hidpp version0 zero unit not stable", LogitechProtocol.ParseHardwareId(identityReport) == null);
+                for (int i = 5; i < 9; i++) identityReport[i] = 255;
+                check("hidpp invalid unit not stable", LogitechProtocol.ParseHardwareId(identityReport) == null);
+                var oldIdentity = new DeviceReading { Id = "old-port", Name = "PRO X Wireless", OriginalName = "PRO X Wireless",
+                    Vid = 0x046D, Pid = 0xC547, HardwareId = hardwareId, Disconnected = true,
+                    Kind = DeviceKind.Keyboard, Transport = "2.4G", Protocol = "HID++" };
+                var newIdentity = new DeviceReading { Id = "new-port", Name = "My headphones", OriginalName = "PRO X Wireless",
+                    Vid = 0x046D, Pid = 0xC547, HardwareId = hardwareId, Kind = DeviceKind.Headset,
+                    Transport = "2.4G", Protocol = "HID++" };
+                check("history matches physical device after port change", DeviceIdentity.SameHardware(oldIdentity, newIdentity));
+                check("history tolerates corrected kind and custom display name", DeviceIdentity.CanConfirmMerge(oldIdentity, newIdentity));
+                newIdentity.HardwareId = hardwareId + "different";
+                check("history keeps same-model different units", !DeviceIdentity.SameHardware(oldIdentity, newIdentity));
+                check("history forbids confirmed merge of different known units", !DeviceIdentity.CanConfirmMerge(oldIdentity, newIdentity));
+                oldIdentity.HardwareId = null; newIdentity.HardwareId = null;
+                check("legacy names never auto-merge", !DeviceIdentity.SameHardware(oldIdentity, newIdentity));
+                check("legacy exact model may offer confirmation", DeviceIdentity.CanConfirmMerge(oldIdentity, newIdentity));
+                newIdentity.Pid = 0xC539;
+                check("legacy different receiver excluded", !DeviceIdentity.CanConfirmMerge(oldIdentity, newIdentity));
+                newIdentity.Pid = 0xC547; newIdentity.IsBluetooth = true;
+                check("legacy different transport excluded", !DeviceIdentity.CanConfirmMerge(oldIdentity, newIdentity));
+                newIdentity.IsBluetooth = false; oldIdentity.Disconnected = false;
+                check("two online devices cannot use history merge", !DeviceIdentity.CanConfirmMerge(oldIdentity, newIdentity));
+                ulong address;
+                check("classic address extracted from device node", BluetoothConnection.TryParseAddress("BTHENUM\\DEV_AABBCCDDEEFF\\7&test", out address) && address == 0xAABBCCDDEEFFUL);
+                check("classic address rejects service nodes", !BluetoothConnection.TryParseAddress("BTHENUM\\{0000111e-test}", out address));
+                check("classic address rejects invalid hex", !BluetoothConnection.TryParseAddress("BTHENUM\\DEV_AABBCCDDEEFZ", out address));
+                check("classic address rejects extra digits", !BluetoothConnection.TryParseAddress("BTHENUM\\DEV_AABBCCDDEEFF0", out address));
+                check("cached battery accepted only when connected", BluetoothConnection.CanUseCachedBattery(true, true));
+                check("cached battery not proof of connection", !BluetoothConnection.CanUseCachedBattery(true, false));
+                check("unknown classic state not treated online", !BluetoothConnection.CanUseCachedBattery(true, null));
+                check("BLE property path preserved", BluetoothConnection.CanUseCachedBattery(false, null));
+                var containerAddresses = new Dictionary<string, ulong>(StringComparer.OrdinalIgnoreCase) { { "headset", 0xAABBCCDDEEFFUL } };
+                var connectedStates = new Dictionary<ulong, bool> { { 0xAABBCCDDEEFFUL, false } };
+                check("headset container resolves disconnected state", BluetoothConnection.State("HEADSET", containerAddresses, connectedStates) == false);
+                check("unknown container remains unknown", !BluetoothConnection.State("absent", containerAddresses, connectedStates).HasValue);
+                check("HFP service uses classic connection gate", WindowsBatteryProperty.IsClassicBluetoothInstance("BTHHFENUM\\test"));
+                check("BLE service not classified classic", !WindowsBatteryProperty.IsClassicBluetoothInstance("BTHLEDEVICE\\test"));
                 byte[] descriptor =
                 {
                     0x05, 0x06, 0x09, 0x01, 0x15, 0x00, 0x25, 0x64, 0x75, 0x08, 0x95, 0x01, 0x85, 0x03, 0xB1, 0x02,
@@ -269,3 +357,4 @@ namespace GearPower
         }
     }
 }
+

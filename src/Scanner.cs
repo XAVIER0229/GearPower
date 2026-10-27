@@ -230,6 +230,13 @@ namespace GearPower
 
             var reading = new DeviceReading();
             reading.Id = group.Key;
+            reading.HardwareId = probe.HardwareId;
+            if (string.IsNullOrEmpty(reading.HardwareId))
+            {
+                string serial = group.Interfaces.Select(i => i.Serial).FirstOrDefault(s => !string.IsNullOrWhiteSpace(s));
+                if (!string.IsNullOrEmpty(serial))
+                    reading.HardwareId = "hid:" + group.Vid.ToString("X4") + ":" + group.Pid.ToString("X4") + ":" + serial;
+            }
             reading.Name = string.IsNullOrEmpty(probe.ModelName) ? group.Name : probe.ModelName;
             reading.OriginalName = reading.Name;
             reading.Vendor = group.Vendor;
@@ -255,7 +262,7 @@ namespace GearPower
             var readingByGroup = new Dictionary<string, DeviceReading>(StringComparer.OrdinalIgnoreCase);
             foreach (DeviceReading reading in result.Readings)
             {
-                if (!reading.IsBluetooth) readingByGroup[reading.Id] = reading;
+                readingByGroup[reading.Id] = reading;
             }
 
             foreach (HidInterfaceInfo iface in interfaces)
@@ -341,7 +348,7 @@ namespace GearPower
 
             foreach (DeviceReading reading in result.Readings)
             {
-                if (!reading.IsBluetooth) continue;
+                if (!reading.IsBluetooth || !reading.Id.StartsWith("bt:", StringComparison.OrdinalIgnoreCase)) continue;
                 var row = new InventoryRow();
                 row.Name = reading.Name;
                 row.Kind = KindNames.Label(reading.Kind);
@@ -351,7 +358,7 @@ namespace GearPower
                 row.Usage = "BLE / 经典蓝牙";
                 row.Interface = "—";
                 row.Reports = "—";
-                row.Status = "电量 " + reading.Percent + "% · " + reading.Protocol;
+                row.Status = (reading.Percent.HasValue ? "电量 " + reading.Percent + "%" : "已识别 · 未读到电量") + " · " + reading.Protocol;
                 row.IsSupported = true;
                 row.Path = reading.Id;
                 row.Detail = reading.Name + Environment.NewLine + "蓝牙设备" + Environment.NewLine + reading.Note;
@@ -377,3 +384,4 @@ namespace GearPower
         }
     }
 }
+

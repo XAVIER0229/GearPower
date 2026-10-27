@@ -1,5 +1,38 @@
 # Third-party notices
 
+## Stable device identity and Bluetooth connection state
+
+The optional Logitech HID++ device identity query (feature 0x0003) independently
+uses the unit-id/model-id layout documented by Solaar's get_ids:
+https://github.com/pwr-Solaar/Solaar/blob/master/lib/logitech_receiver/hidpp20.py
+No Solaar source code is copied. Zero/invalid identifiers are not used to merge
+history, and name-only legacy history requires explicit user confirmation.
+
+Classic Bluetooth connection checks use Microsoft's BluetoothFindFirstDevice /
+BluetoothFindNextDevice and BLUETOOTH_DEVICE_INFO.fConnected. No discovery or
+connection requests are issued. This API does not enumerate Bluetooth LE, whose
+existing property path is retained:
+https://learn.microsoft.com/windows/win32/api/bluetoothapis/ns-bluetoothapis-bluetooth_device_info_struct
+
+Generic HID Feature queries use a zero-access handle to support Windows-owned
+mouse collections. A percentage alone does not imply a charging/full flag.
+Local hardware check: Magic Mouse A1296 (05AC:030D) Feature 0x47 returned 100%.
+
+## Apple Wireless Keyboard 2011 ANSI (05AC:0255), experimental
+
+The local v1.2.8-apple0255-test1 build independently implements a read-only
+battery query for this model. Linux v6.6 documents that this keyboard must be
+queried using a Feature report and returns a percentage, despite declaring
+the battery as Input with logical range 0..255:
+https://github.com/torvalds/linux/blob/v6.6/drivers/hid/hid-input.c
+The product identifier is documented in:
+https://github.com/torvalds/linux/blob/v6.6/drivers/hid/hid-ids.h
+Report ID 0x47 and the two-byte Input report are from the user's Windows HID
+capability diagnostics. No Linux source code is copied. Feature 0x47 is queried
+first, then the declared Input 0x47. No write reports, driver changes, pairing
+changes or cached-descriptor patches are performed. Hardware validation is
+pending; Windows may block Feature queries absent from the cached descriptor.
+
 GearPower is an independent C# implementation. No source code from the
 projects below is copied verbatim; protocol descriptions, command layouts,
 public reverse-engineering notes and selected UI/config concepts were used as
@@ -49,3 +82,4 @@ Windows battery property decoding follows Microsoft's DEVPROPERTY type values:
 https://learn.microsoft.com/en-us/windows-hardware/drivers/install/devproperty
 The HFP battery node and BYTE value (90%) were verified locally on a HUAWEI
 FreeBuds Pro 2; no third-party source code was copied for this implementation.
+
