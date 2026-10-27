@@ -32,6 +32,10 @@ namespace GearPower
         private readonly TextBlock summaryText;
         private readonly TextBlock summaryDetail;
         private readonly TextBlock scanTimeText;
+        private readonly TextBlock kpiConnectedValue;
+        private readonly TextBlock kpiAverageValue;
+        private readonly TextBlock kpiLowValue;
+        private readonly TextBlock kpiHistoryValue;
         private readonly Ellipse summaryDot;
         private readonly WrapPanel cardPanel;
         private readonly ScrollViewer cardScroll;
@@ -132,6 +136,10 @@ namespace GearPower
             summaryText = Find<TextBlock>("SummaryText");
             summaryDetail = Find<TextBlock>("SummaryDetail");
             scanTimeText = Find<TextBlock>("ScanTimeText");
+            kpiConnectedValue = Find<TextBlock>("KpiConnectedValue");
+            kpiAverageValue = Find<TextBlock>("KpiAverageValue");
+            kpiLowValue = Find<TextBlock>("KpiLowValue");
+            kpiHistoryValue = Find<TextBlock>("KpiHistoryValue");
             summaryDot = Find<Ellipse>("SummaryDot");
             cardPanel = Find<WrapPanel>("CardPanel");
             cardScroll = Find<ScrollViewer>("CardScroll");
@@ -1268,6 +1276,15 @@ namespace GearPower
         {
             int connectedCount = lastConnectedReadings.Count;
             int historyCount = Math.Max(0, lastReadings.Count - connectedCount);
+            if (kpiConnectedValue != null) kpiConnectedValue.Text = connectedCount.ToString();
+            if (kpiHistoryValue != null) kpiHistoryValue.Text = historyCount.ToString();
+            if (kpiLowValue != null)
+                kpiLowValue.Text = lastConnectedReadings.Count(r => r.Percent.HasValue && r.Percent.Value <= 20).ToString();
+            if (kpiAverageValue != null)
+            {
+                var withLevels = lastConnectedReadings.Where(r => r.Percent.HasValue).ToList();
+                kpiAverageValue.Text = withLevels.Count == 0 ? "—" : Math.Round(withLevels.Average(r => r.Percent.Value)) + "%";
+            }
             if (connectedCount == 0)
             {
                 if (historyCount > 0)

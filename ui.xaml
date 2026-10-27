@@ -54,6 +54,20 @@
       </Setter>
     </Style>
 
+    <Style x:Key="KpiCard" TargetType="Border">
+      <Setter Property="Background" Value="{DynamicResource PanelBrush}"/>
+      <Setter Property="BorderBrush" Value="#4DFFFFFF"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="24"/>
+      <Setter Property="Padding" Value="18,14"/>
+      <Setter Property="Effect">
+        <Setter.Value>
+          <DropShadowEffect Color="#D6C8BD" BlurRadius="24" ShadowDepth="11"
+                            Direction="45" Opacity="0.62"/>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
     <Style x:Key="NeoButton" TargetType="Button">
       <Setter Property="Background" Value="{DynamicResource PanelBrush}"/>
       <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
@@ -499,7 +513,7 @@
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
 
-      <Border Grid.Column="0" Background="{DynamicResource PanelBrush}" BorderBrush="#4DFFFFFF"
+      <Border Grid.Column="0" Style="{StaticResource KpiCard}" Background="{DynamicResource PanelBrush}" BorderBrush="#4DFFFFFF"
               BorderThickness="1" CornerRadius="24">
         <Border.Effect>
           <DropShadowEffect Color="#D6C8BD" BlurRadius="24" ShadowDepth="11"
@@ -641,6 +655,51 @@
       </Border>
 
       <Grid Grid.Row="2">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,18">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <Border Grid.Column="0" Style="{StaticResource KpiCard}" Background="{DynamicResource PanelBrush}" BorderBrush="#4DFFFFFF"
+                  BorderThickness="1" CornerRadius="24" Padding="18,14" Margin="0,0,9,0">
+            <StackPanel>
+              <TextBlock Text="已连接" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+              <TextBlock x:Name="KpiConnectedValue" Text="—" FontFamily="Bahnschrift" FontSize="31"
+                         FontWeight="SemiBold" Margin="0,5,0,0"/>
+            </StackPanel>
+          </Border>
+          <Border Grid.Column="1" Style="{StaticResource KpiCard}" Background="{DynamicResource PanelBrush}" BorderBrush="#4DFFFFFF"
+                  BorderThickness="1" CornerRadius="24" Padding="18,14" Margin="3,0,9,0">
+            <StackPanel>
+              <TextBlock Text="平均电量" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+              <TextBlock x:Name="KpiAverageValue" Text="—" FontFamily="Bahnschrift" FontSize="31"
+                         FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}" Margin="0,5,0,0"/>
+            </StackPanel>
+          </Border>
+          <Border Grid.Column="2" Style="{StaticResource KpiCard}" Background="{DynamicResource PanelBrush}" BorderBrush="#4DFFFFFF"
+                  BorderThickness="1" CornerRadius="24" Padding="18,14" Margin="3,0,9,0">
+            <StackPanel>
+              <TextBlock Text="低电量" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+              <TextBlock x:Name="KpiLowValue" Text="—" FontFamily="Bahnschrift" FontSize="31"
+                         FontWeight="SemiBold" Foreground="{DynamicResource WarnBrush}" Margin="0,5,0,0"/>
+            </StackPanel>
+          </Border>
+          <Border Grid.Column="3" Style="{StaticResource KpiCard}" Background="{DynamicResource PanelBrush}" BorderBrush="#4DFFFFFF"
+                  BorderThickness="1" CornerRadius="24" Padding="18,14" Margin="3,0,0,0">
+            <StackPanel>
+              <TextBlock Text="历史设备" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+              <TextBlock x:Name="KpiHistoryValue" Text="—" FontFamily="Bahnschrift" FontSize="31"
+                         FontWeight="SemiBold" Margin="0,5,0,0"/>
+            </StackPanel>
+          </Border>
+        </Grid>
+
+        <Grid Grid.Row="1">
         <ScrollViewer x:Name="CardScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                       Padding="0,0,2,0">
           <WrapPanel x:Name="CardPanel" Orientation="Horizontal"/>
@@ -968,6 +1027,7 @@
             </StackPanel>
           </ScrollViewer>
         </Border>
+        </Grid>
       </Grid>
       </Grid>
     </Grid>
