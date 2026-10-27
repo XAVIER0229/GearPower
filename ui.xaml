@@ -54,34 +54,196 @@
       </Setter>
     </Style>
 
+    <Style x:Key="NeoButton" TargetType="Button">
+      <Setter Property="Background" Value="{DynamicResource PanelBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Padding" Value="14,6"/>
+      <Setter Property="Height" Value="40"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Grid x:Name="Root" Margin="4" RenderTransformOrigin="0.5,0.5">
+              <Grid.RenderTransform>
+                <TranslateTransform x:Name="Move" Y="0"/>
+              </Grid.RenderTransform>
+              <Border x:Name="Light" CornerRadius="16" Background="{TemplateBinding Background}"
+                      IsHitTestVisible="False">
+                <Border.Effect>
+                  <DropShadowEffect Color="#FFFFFF" BlurRadius="10" ShadowDepth="4"
+                                    Direction="225" Opacity="0.9"/>
+                </Border.Effect>
+              </Border>
+              <Border x:Name="Dark" CornerRadius="16" Background="{TemplateBinding Background}"
+                      IsHitTestVisible="False">
+                <Border.Effect>
+                  <DropShadowEffect Color="#D6C8BD" BlurRadius="12" ShadowDepth="5"
+                                    Direction="45" Opacity="0.95"/>
+                </Border.Effect>
+              </Border>
+              <Border x:Name="Bd" CornerRadius="16" Background="{TemplateBinding Background}"
+                      BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                      Padding="{TemplateBinding Padding}">
+                <Grid>
+                  <Border x:Name="Inset" CornerRadius="16" Opacity="0" IsHitTestVisible="False">
+                    <Border.Background>
+                      <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#CCB8A493" Offset="0"/>
+                        <GradientStop Color="#66B8A493" Offset="0.38"/>
+                        <GradientStop Color="#00FFFFFF" Offset="0.66"/>
+                        <GradientStop Color="#CCFFFFFF" Offset="1"/>
+                      </LinearGradientBrush>
+                    </Border.Background>
+                  </Border>
+                  <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Grid>
+              </Border>
+            </Grid>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Opacity" Value="0.97"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Opacity" Value="0.88"/>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.42"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style x:Key="NeoIconButton" TargetType="Button" BasedOn="{StaticResource NeoButton}">
+      <Setter Property="Width" Value="40"/>
+      <Setter Property="Padding" Value="0"/>
+    </Style>
+
+    <Style x:Key="NeumorphicOptionButton" TargetType="Button">
+      <Setter Property="Background" Value="{DynamicResource SummaryBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Padding" Value="14,7"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="FontSize" Value="10.5"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Bd" Margin="4"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="14" Padding="{TemplateBinding Padding}">
+              <Border.Effect>
+                <DropShadowEffect Color="#BFAE9F" BlurRadius="14" ShadowDepth="4"
+                                  Direction="45" Opacity="0.55"/>
+              </Border.Effect>
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource GhostHoverBrush}"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource GhostPressedBrush}"/>
+                <Setter TargetName="Bd" Property="Effect">
+                  <Setter.Value>
+                    <DropShadowEffect Color="#D6C8BD" BlurRadius="5" ShadowDepth="0" Opacity="0.35"/>
+                  </Setter.Value>
+                </Setter>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.42"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
     <Style x:Key="IosSwitch" TargetType="ToggleButton">
-      <Setter Property="Width" Value="44"/>
-      <Setter Property="Height" Value="26"/>
+      <Setter Property="Width" Value="58"/>
+      <Setter Property="Height" Value="28"/>
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="ToggleButton">
-            <Grid Width="44" Height="26" Background="Transparent">
-              <Border x:Name="Track" CornerRadius="13" Background="{DynamicResource SwitchOffBrush}"
-                      BorderBrush="{DynamicResource SwitchBorderBrush}" BorderThickness="1"/>
-              <Border x:Name="Knob" Width="20" Height="20" CornerRadius="10"
+            <Grid Width="58" Height="28" Background="Transparent">
+              <Border x:Name="Track" Width="48" Height="28" CornerRadius="14"
+                      HorizontalAlignment="Left"
+                      Background="{DynamicResource InputBrush}"
+                      BorderBrush="{DynamicResource OptionBorderBrush}" BorderThickness="1">
+                <Grid>
+                  <Border x:Name="TrackInset" CornerRadius="14" Opacity="0.55" IsHitTestVisible="False">
+                    <Border.Background>
+                      <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#66D6C8BD" Offset="0"/>
+                        <GradientStop Color="#22D6C8BD" Offset="0.42"/>
+                        <GradientStop Color="#00FFFFFF" Offset="0.68"/>
+                        <GradientStop Color="#88FFFFFF" Offset="1"/>
+                      </LinearGradientBrush>
+                    </Border.Background>
+                  </Border>
+                </Grid>
+              </Border>
+              <Ellipse x:Name="Led" Width="5" Height="5" Fill="{DynamicResource SwitchOnBrush}"
+                       HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,1,0"
+                       Opacity="0.25">
+                <Ellipse.Effect>
+                  <DropShadowEffect Color="#2F4BD0" BlurRadius="6" ShadowDepth="0" Opacity="0.55"/>
+                </Ellipse.Effect>
+              </Ellipse>
+              <Border x:Name="Knob" Width="22" Height="22" CornerRadius="11"
                       Background="{DynamicResource SwitchKnobBrush}" HorizontalAlignment="Left"
                       VerticalAlignment="Center" Margin="3,0,0,0">
+                <Border.RenderTransform>
+                  <TranslateTransform x:Name="KnobShift" X="0"/>
+                </Border.RenderTransform>
                 <Border.Effect>
-                  <DropShadowEffect BlurRadius="3" ShadowDepth="1" Opacity="0.28" Color="#000000"/>
+                  <DropShadowEffect BlurRadius="7" ShadowDepth="2" Direction="45"
+                                    Opacity="0.32" Color="#000000"/>
                 </Border.Effect>
               </Border>
             </Grid>
             <ControlTemplate.Triggers>
               <Trigger Property="IsChecked" Value="True">
-                <Setter TargetName="Track" Property="Background" Value="{DynamicResource SwitchOnBrush}"/>
                 <Setter TargetName="Track" Property="BorderBrush" Value="{DynamicResource SwitchOnBrush}"/>
-                <Setter TargetName="Knob" Property="HorizontalAlignment" Value="Right"/>
-                <Setter TargetName="Knob" Property="Margin" Value="0,0,3,0"/>
+                <Setter TargetName="Knob" Property="Background" Value="{DynamicResource SwitchOnBrush}"/>
+                <Setter TargetName="Led" Property="Opacity" Value="1"/>
+                <Trigger.EnterActions>
+                  <BeginStoryboard>
+                    <Storyboard>
+                      <DoubleAnimation Storyboard.TargetName="KnobShift"
+                                       Storyboard.TargetProperty="X" To="20"
+                                       Duration="0:0:0.24">
+                        <DoubleAnimation.EasingFunction>
+                          <BackEase EasingMode="EaseOut" Amplitude="0.32"/>
+                        </DoubleAnimation.EasingFunction>
+                      </DoubleAnimation>
+                    </Storyboard>
+                  </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                  <BeginStoryboard>
+                    <Storyboard>
+                      <DoubleAnimation Storyboard.TargetName="KnobShift"
+                                       Storyboard.TargetProperty="X" To="0"
+                                       Duration="0:0:0.24">
+                        <DoubleAnimation.EasingFunction>
+                          <BackEase EasingMode="EaseOut" Amplitude="0.32"/>
+                        </DoubleAnimation.EasingFunction>
+                      </DoubleAnimation>
+                    </Storyboard>
+                  </BeginStoryboard>
+                </Trigger.ExitActions>
               </Trigger>
               <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="Track" Property="Opacity" Value="0.88"/>
+                <Setter TargetName="Knob" Property="Opacity" Value="0.94"/>
               </Trigger>
               <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Opacity" Value="0.45"/>
@@ -141,6 +303,48 @@
           </ControlTemplate>
         </Setter.Value>
       </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="NeumorphicTabTemplate" TargetType="Button">
+      <Grid x:Name="Root" RenderTransformOrigin="0.5,0.5">
+        <Grid.RenderTransform>
+          <TranslateTransform x:Name="Lift" Y="0"/>
+        </Grid.RenderTransform>
+        <Border x:Name="Highlight" CornerRadius="12" Margin="4,2,4,5"
+                Background="{DynamicResource TabBarBrush}">
+          <Border.Effect>
+            <DropShadowEffect Color="#FFFFFF" BlurRadius="12" ShadowDepth="4"
+                              Direction="225" Opacity="0.55"/>
+          </Border.Effect>
+        </Border>
+        <Border x:Name="Keycap" CornerRadius="12" Margin="4,2,4,5"
+                Background="{DynamicResource TabBarBrush}"
+                BorderThickness="0">
+          <Border.Effect>
+            <DropShadowEffect x:Name="KeyShadow" Color="#000000" BlurRadius="10"
+                              ShadowDepth="2" Direction="45" Opacity="0.30"/>
+          </Border.Effect>
+          <Grid>
+            <Border x:Name="Inset" CornerRadius="12" Opacity="0" IsHitTestVisible="False"/>
+            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="Center" Margin="0,0,14,0"/>
+            <Ellipse x:Name="Led" Width="5" Height="5" Fill="{DynamicResource AccentBrush}"
+                     HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,9,0"
+                     Visibility="Collapsed" IsHitTestVisible="False"/>
+          </Grid>
+        </Border>
+      </Grid>
+    </ControlTemplate>
+
+    <Style x:Key="NeumorphicTabButton" TargetType="Button">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{DynamicResource TabInactiveForegroundBrush}"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Width" Value="82"/>
+      <Setter Property="Height" Value="36"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="FontSize" Value="12.5"/>
+      <Setter Property="Template" Value="{StaticResource NeumorphicTabTemplate}"/>
     </Style>
 
     <Style x:Key="PrimaryButton" TargetType="Button">
@@ -274,7 +478,6 @@
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="34"/>
-      <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
       <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
@@ -292,50 +495,126 @@
       </StackPanel>
     </Grid>
 
-    <!-- Header -->
-    <Grid Grid.Row="1" Margin="40,14,40,16">
-      <TextBlock Text="GearPower" FontSize="24" FontWeight="SemiBold" VerticalAlignment="Center"/>
-      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-        <Border Background="{DynamicResource TabBarBrush}" BorderBrush="{DynamicResource PanelBorderBrush}"
-                BorderThickness="1" CornerRadius="12" Padding="3">
-          <StackPanel Orientation="Horizontal">
-            <Button x:Name="BatteryTab" Style="{StaticResource TabButton}" Content="电量"
-                    Background="{DynamicResource TabActiveBrush}" Foreground="{DynamicResource TabActiveForegroundBrush}"/>
-            <Button x:Name="DeviceTab" Style="{StaticResource TabButton}" Content="设备清单"
-                    Foreground="{DynamicResource TabInactiveForegroundBrush}" Margin="2,0,0,0"/>
-            <Button x:Name="ProfileTab" Style="{StaticResource TabButton}" Content="设备适配"
-                    Foreground="{DynamicResource TabInactiveForegroundBrush}" Margin="2,0,0,0"/>
-            <Button x:Name="SettingsTab" Style="{StaticResource TabButton}" Content="设置"
-                    Foreground="{DynamicResource TabInactiveForegroundBrush}" Margin="2,0,0,0"/>
-          </StackPanel>
-        </Border>
-        <Border Background="{DynamicResource SummaryBrush}" BorderBrush="{DynamicResource SummaryBorderBrush}"
-                BorderThickness="1" CornerRadius="12" Padding="10,5" Margin="8,0,0,0"
-                ToolTip="显示或隐藏蓝牙设备电量；关闭后历史蓝牙卡片暂时隐藏">
-          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-            <TextBlock Text="蓝牙" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"
-                       VerticalAlignment="Center"/>
-            <ToggleButton x:Name="BluetoothEnabledSwitch" Style="{StaticResource IosSwitch}" Margin="8,0,0,0"
-                          AutomationProperties.Name="显示蓝牙设备电量" VerticalAlignment="Center"/>
-          </StackPanel>
-        </Border>
-        <Button x:Name="RefreshButton" Style="{StaticResource GhostButton}" Width="38" Height="36" Padding="0"
-                Margin="4,0,0,0" ToolTip="立即重新扫描（F5）">
-          <TextBlock x:Name="RefreshGlyph" Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="15"
-                     Foreground="{DynamicResource RefreshGlyphBrush}"/>
-        </Button>
-      </StackPanel>
-    </Grid>
+    <!-- Sidebar + Main -->
+    <Grid Grid.Row="1">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="236"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
 
-    <!-- Main -->
-    <Grid Grid.Row="2" Margin="40,0,40,6">
+      <Border Grid.Column="0">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+          <StackPanel Grid.Row="0" Margin="24,24,18,0">
+            <Border Width="44" Height="44" CornerRadius="14" Background="{DynamicResource PanelBrush}"
+                    HorizontalAlignment="Left" Margin="0,0,0,12">
+              <Border.Effect>
+                <DropShadowEffect Color="#D6C8BD" BlurRadius="10" ShadowDepth="4"
+                                  Direction="45" Opacity="0.7"/>
+              </Border.Effect>
+              <TextBlock Text="&#xE83F;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                         Foreground="{DynamicResource TextPrimaryBrush}"
+                         HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <TextBlock Text="GearPower" FontSize="24" FontWeight="SemiBold"/>
+            <TextBlock Text="SOFT UI" FontSize="9" Foreground="{DynamicResource TextMutedBrush}"
+                       Margin="1,2,0,0"/>
+            <TextBlock Text="WORKSPACE" FontSize="9.5" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextMutedBrush}" Margin="1,32,0,4"/>
+            <Button x:Name="BatteryTab" Style="{StaticResource NeumorphicTabButton}"
+                    Width="190" Height="46" HorizontalContentAlignment="Left" Padding="16,0"
+                    Foreground="{DynamicResource TabActiveForegroundBrush}" Margin="0,6,0,0">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Text="&#xE83F;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
+                <TextBlock Text="电量" FontSize="13" Margin="11,0,0,0" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+            <Button x:Name="DeviceTab" Style="{StaticResource NeumorphicTabButton}"
+                    Width="190" Height="46" HorizontalContentAlignment="Left" Padding="16,0"
+                    Foreground="{DynamicResource TabInactiveForegroundBrush}" Margin="0,8,0,0">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Text="&#xE8FD;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
+                <TextBlock Text="设备清单" FontSize="13" Margin="11,0,0,0" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+            <Button x:Name="ProfileTab" Style="{StaticResource NeumorphicTabButton}"
+                    Width="190" Height="46" HorizontalContentAlignment="Left" Padding="16,0"
+                    Foreground="{DynamicResource TabInactiveForegroundBrush}" Margin="0,8,0,0">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Text="&#xE90F;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
+                <TextBlock Text="设备适配" FontSize="13" Margin="11,0,0,0" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+            <Button x:Name="SettingsTab" Style="{StaticResource NeumorphicTabButton}"
+                    Width="190" Height="46" HorizontalContentAlignment="Left" Padding="16,0"
+                    Foreground="{DynamicResource TabInactiveForegroundBrush}" Margin="0,8,0,0">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
+                <TextBlock Text="设置" FontSize="13" Margin="11,0,0,0" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+          </StackPanel>
+
+          <Border Grid.Row="2" Margin="18,0,18,18" Background="{DynamicResource PanelBrush}"
+                  CornerRadius="24" Padding="16">
+            <StackPanel>
+              <TextBlock Text="本地读取" FontSize="9.5" FontWeight="SemiBold"
+                         Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,6"/>
+              <TextBlock Text="不上传设备数据" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+              <TextBlock Text="功率数据仅保存在本机" FontSize="9.5"
+                         Foreground="{DynamicResource TextMutedBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+          </Border>
+        </Grid>
+      </Border>
+
+      <Grid Grid.Column="1" Margin="32,22,36,0">
       <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="*"/>
       </Grid.RowDefinitions>
 
-      <Border Grid.Row="0" Background="{DynamicResource SummaryBrush}" BorderBrush="{DynamicResource SummaryBorderBrush}"
-              BorderThickness="1" CornerRadius="16" Padding="18,13" Margin="0,0,0,14">
+      <Grid Grid.Row="0" Margin="0,0,0,16">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+          <TextBlock Text="GEARPOWER / BATTERY" FontSize="9" Foreground="{DynamicResource TextMutedBrush}"/>
+          <TextBlock Text="设备电量" FontSize="30" FontWeight="SemiBold" Margin="0,5,0,0"/>
+          <TextBlock Text="无线外设状态，一屏掌握。" FontSize="11.5"
+                     Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,0"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+          <Border Background="{DynamicResource PanelBrush}" CornerRadius="16" Padding="12,4" Margin="0,0,10,0">
+            <Border.Effect>
+              <DropShadowEffect Color="#D6C8BD" BlurRadius="10" ShadowDepth="4"
+                                Direction="45" Opacity="0.65"/>
+            </Border.Effect>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <TextBlock Text="蓝牙" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"
+                         VerticalAlignment="Center" Margin="0,0,8,0"/>
+              <ToggleButton x:Name="BluetoothEnabledSwitch" Style="{StaticResource IosSwitch}"
+                            AutomationProperties.Name="显示蓝牙设备电量" VerticalAlignment="Center"/>
+            </StackPanel>
+          </Border>
+          <Button x:Name="RefreshButton" Style="{StaticResource NeoButton}" Height="40"
+                  ToolTip="立即重新扫描（F5）">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock x:Name="RefreshGlyph" Text="&#xE72C;" FontFamily="Segoe MDL2 Assets"
+                         FontSize="14" VerticalAlignment="Center" Foreground="{DynamicResource RefreshGlyphBrush}"/>
+              <TextBlock Text="重新扫描" FontSize="11.5" Margin="8,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Grid>
+
+      <Border Grid.Row="1" Background="Transparent" BorderThickness="0" Padding="0" Margin="0,0,0,14">
         <Grid>
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -359,7 +638,7 @@
         </Grid>
       </Border>
 
-      <Grid Grid.Row="1">
+      <Grid Grid.Row="2">
         <ScrollViewer x:Name="CardScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                       Padding="0,0,2,0">
           <WrapPanel x:Name="CardPanel" Orientation="Horizontal"/>
@@ -384,6 +663,9 @@
 
         <Border x:Name="InventoryView" Visibility="Collapsed" Background="{DynamicResource SummaryBrush}"
                 BorderBrush="{DynamicResource SummaryBorderBrush}" BorderThickness="1" CornerRadius="16" Padding="0">
+          <Border.Effect>
+            <DropShadowEffect Color="#D6C8BD" BlurRadius="20" ShadowDepth="5" Direction="45" Opacity="0.45"/>
+          </Border.Effect>
           <Grid>
             <Grid.RowDefinitions>
               <RowDefinition Height="Auto"/>
@@ -405,7 +687,7 @@
                 <TextBlock Text="所有 HID 接口的原始信息。读不到电量时，复制诊断信息发给开发者即可适配。"
                            FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" Margin="0,4,0,0"/>
               </StackPanel>
-              <Button x:Name="CopyDiagButton" Grid.Column="1" Style="{StaticResource GhostButton}" Content="复制诊断信息"
+              <Button x:Name="CopyDiagButton" Grid.Column="1" Style="{StaticResource NeoButton}" Content="复制诊断信息"
                       BorderBrush="{DynamicResource PanelBorderBrush}" BorderThickness="1" VerticalAlignment="Center"/>
             </Grid>
 
@@ -445,7 +727,7 @@
                   <TextBlock Text="把型号和诊断信息发给我，我会继续适配。" FontSize="10"
                              Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0"/>
                 </StackPanel>
-                <Button x:Name="DeviceRequestButton" Grid.Column="1" Style="{StaticResource GhostButton}"
+                <Button x:Name="DeviceRequestButton" Grid.Column="1" Style="{StaticResource NeoButton}"
                         Content="提交给开发者" BorderBrush="{DynamicResource PanelBorderBrush}"
                         BorderThickness="1" Padding="14,7" FontSize="10.5" VerticalAlignment="Center"
                         ToolTip="在浏览器中打开 GitHub 新建 Issue"/>
@@ -456,11 +738,17 @@
 
         <Border x:Name="ProfileView" Visibility="Collapsed" Background="{DynamicResource SummaryBrush}"
                 BorderBrush="{DynamicResource SummaryBorderBrush}" BorderThickness="1" CornerRadius="16" Padding="0">
+          <Border.Effect>
+            <DropShadowEffect Color="#D6C8BD" BlurRadius="20" ShadowDepth="5" Direction="45" Opacity="0.45"/>
+          </Border.Effect>
           <Grid x:Name="ProfileHost"/>
         </Border>
 
         <Border x:Name="SettingsView" Visibility="Collapsed" Background="{DynamicResource SummaryBrush}"
                 BorderBrush="{DynamicResource SummaryBorderBrush}" BorderThickness="1" CornerRadius="16" Padding="0">
+          <Border.Effect>
+            <DropShadowEffect Color="#D6C8BD" BlurRadius="20" ShadowDepth="5" Direction="45" Opacity="0.45"/>
+          </Border.Effect>
           <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Margin="24,20,24,24">
               <TextBlock Text="设置" FontSize="20" FontWeight="SemiBold"/>
@@ -474,38 +762,38 @@
                   <TextBlock Text="选择浅色、深色，或跟随 Windows 的应用主题。" FontSize="10.5"
                              Foreground="{DynamicResource TextMutedBrush}" Margin="0,3,0,0"/>
                   <WrapPanel Margin="0,12,0,0">
-                    <Button x:Name="ThemeSystemOption" Style="{StaticResource GhostButton}" Content="跟随系统"
+                    <Button x:Name="ThemeSystemOption" Style="{StaticResource NeumorphicOptionButton}" Content="跟随系统"
                             Tag="System" Padding="14,7" FontSize="11"/>
-                    <Button x:Name="ThemeLightOption" Style="{StaticResource GhostButton}" Content="浅色"
+                    <Button x:Name="ThemeLightOption" Style="{StaticResource NeumorphicOptionButton}" Content="浅色"
                             Tag="Light" Padding="14,7" FontSize="11" Margin="6,0,0,0"/>
-                    <Button x:Name="ThemeDarkOption" Style="{StaticResource GhostButton}" Content="深色"
+                    <Button x:Name="ThemeDarkOption" Style="{StaticResource NeumorphicOptionButton}" Content="深色"
                             Tag="Dark" Padding="14,7" FontSize="11" Margin="6,0,0,0"/>
                   </WrapPanel>
                   <TextBlock Text="强调色" FontSize="10.5" Foreground="{DynamicResource TextSecondaryBrush}"
                              Margin="0,12,0,0"/>
                   <WrapPanel Margin="0,7,0,0">
-                    <Button x:Name="AccentGreenOption" Style="{StaticResource GhostButton}" Padding="10,6"
+                    <Button x:Name="AccentGreenOption" Style="{StaticResource NeumorphicOptionButton}" Padding="10,6"
                             FontSize="10.5" Tag="Green">
                       <StackPanel Orientation="Horizontal">
                         <Border Width="10" Height="10" CornerRadius="5" Background="#22C55E" VerticalAlignment="Center"/>
                         <TextBlock Text="绿色" Margin="6,0,0,0"/>
                       </StackPanel>
                     </Button>
-                    <Button x:Name="AccentPinkOption" Style="{StaticResource GhostButton}" Padding="10,6"
+                    <Button x:Name="AccentPinkOption" Style="{StaticResource NeumorphicOptionButton}" Padding="10,6"
                             FontSize="10.5" Tag="Pink" Margin="6,0,0,0">
                       <StackPanel Orientation="Horizontal">
                         <Border Width="10" Height="10" CornerRadius="5" Background="#EC4899" VerticalAlignment="Center"/>
                         <TextBlock Text="粉色" Margin="6,0,0,0"/>
                       </StackPanel>
                     </Button>
-                    <Button x:Name="AccentYellowOption" Style="{StaticResource GhostButton}" Padding="10,6"
+                    <Button x:Name="AccentYellowOption" Style="{StaticResource NeumorphicOptionButton}" Padding="10,6"
                             FontSize="10.5" Tag="Yellow" Margin="6,0,0,0">
                       <StackPanel Orientation="Horizontal">
                         <Border Width="10" Height="10" CornerRadius="5" Background="#EAB308" VerticalAlignment="Center"/>
                         <TextBlock Text="黄色" Margin="6,0,0,0"/>
                       </StackPanel>
                     </Button>
-                    <Button x:Name="AccentBlueOption" Style="{StaticResource GhostButton}" Padding="10,6"
+                    <Button x:Name="AccentBlueOption" Style="{StaticResource NeumorphicOptionButton}" Padding="10,6"
                             FontSize="10.5" Tag="Blue" Margin="6,0,0,0">
                       <StackPanel Orientation="Horizontal">
                         <Border Width="10" Height="10" CornerRadius="5" Background="#3B82F6" VerticalAlignment="Center"/>
@@ -523,13 +811,13 @@
                   <TextBlock Text="设备休眠时也会按这个间隔重新尝试读取。" FontSize="10.5"
                              Foreground="{DynamicResource TextMutedBrush}" Margin="0,3,0,0"/>
                   <WrapPanel Margin="0,12,0,0">
-                    <Button x:Name="Refresh30Option" Style="{StaticResource GhostButton}" Content="30 秒"
+                    <Button x:Name="Refresh30Option" Style="{StaticResource NeumorphicOptionButton}" Content="30 秒"
                             Tag="30" Padding="14,7" FontSize="11"/>
-                    <Button x:Name="Refresh60Option" Style="{StaticResource GhostButton}" Content="60 秒"
+                    <Button x:Name="Refresh60Option" Style="{StaticResource NeumorphicOptionButton}" Content="60 秒"
                             Tag="60" Padding="14,7" FontSize="11" Margin="6,0,0,0"/>
-                    <Button x:Name="Refresh300Option" Style="{StaticResource GhostButton}" Content="5 分钟"
+                    <Button x:Name="Refresh300Option" Style="{StaticResource NeumorphicOptionButton}" Content="5 分钟"
                             Tag="300" Padding="14,7" FontSize="11" Margin="6,0,0,0"/>
-                    <Button x:Name="RefreshOffOption" Style="{StaticResource GhostButton}" Content="关闭"
+                    <Button x:Name="RefreshOffOption" Style="{StaticResource NeumorphicOptionButton}" Content="关闭"
                             Tag="0" Padding="14,7" FontSize="11" Margin="6,0,0,0"/>
                   </WrapPanel>
                 </StackPanel>
@@ -571,11 +859,11 @@
                   <TextBlock Text="选择点击右上角关闭按钮后的行为；也可以在弹窗里勾选记住选择。" FontSize="10"
                              Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0"/>
                   <WrapPanel Margin="0,8,0,0">
-                    <Button x:Name="CloseAskOption" Style="{StaticResource GhostButton}" Content="每次询问"
+                    <Button x:Name="CloseAskOption" Style="{StaticResource NeumorphicOptionButton}" Content="每次询问"
                             Tag="0" Padding="12,6" FontSize="10.5"/>
-                    <Button x:Name="CloseTrayOption" Style="{StaticResource GhostButton}" Content="关闭到托盘"
+                    <Button x:Name="CloseTrayOption" Style="{StaticResource NeumorphicOptionButton}" Content="关闭到托盘"
                             Tag="1" Padding="12,6" FontSize="10.5" Margin="6,0,0,0"/>
-                    <Button x:Name="CloseExitOption" Style="{StaticResource GhostButton}" Content="直接退出"
+                    <Button x:Name="CloseExitOption" Style="{StaticResource NeumorphicOptionButton}" Content="直接退出"
                             Tag="2" Padding="12,6" FontSize="10.5" Margin="6,0,0,0"/>
                   </WrapPanel>
                 </StackPanel>
@@ -598,7 +886,7 @@
                     <ToggleButton x:Name="AutoStartSwitch" Grid.Column="1" Style="{StaticResource IosSwitch}"
                                   AutomationProperties.Name="开机自动启动" VerticalAlignment="Center"/>
                   </Grid>
-                  <Button x:Name="GuideButton" Style="{StaticResource GhostButton}"
+                  <Button x:Name="GuideButton" Style="{StaticResource NeoButton}"
                           Content="重新查看功能引导" Padding="12,6" FontSize="10.5"
                           HorizontalAlignment="Left" Margin="0,12,0,0"/>
                 </StackPanel>
@@ -636,13 +924,13 @@
                   <TextBlock Text="只影响任务栏电量条，不改变托盘电池图标。" FontSize="9.5"
                              Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0"/>
                   <WrapPanel Margin="0,7,0,0">
-                    <Button x:Name="TaskbarNormalColorButton" Style="{StaticResource GhostButton}" Content="正常"
+                    <Button x:Name="TaskbarNormalColorButton" Style="{StaticResource NeoButton}" Content="正常"
                             Padding="12,5" FontSize="10" ToolTip="点击修改正常电量颜色"/>
-                    <Button x:Name="TaskbarWarnColorButton" Style="{StaticResource GhostButton}" Content="偏低"
+                    <Button x:Name="TaskbarWarnColorButton" Style="{StaticResource NeoButton}" Content="偏低"
                             Padding="12,5" FontSize="10" Margin="6,0,0,0" ToolTip="点击修改偏低电量颜色"/>
-                    <Button x:Name="TaskbarDangerColorButton" Style="{StaticResource GhostButton}" Content="过低"
+                    <Button x:Name="TaskbarDangerColorButton" Style="{StaticResource NeoButton}" Content="过低"
                             Padding="12,5" FontSize="10" Margin="6,0,0,0" ToolTip="点击修改低电量颜色"/>
-                    <Button x:Name="TaskbarColorResetButton" Style="{StaticResource GhostButton}" Content="恢复默认"
+                    <Button x:Name="TaskbarColorResetButton" Style="{StaticResource NeoButton}" Content="恢复默认"
                             Padding="10,5" FontSize="9.5" Margin="10,0,0,0"/>
                   </WrapPanel>
                   <TextBlock x:Name="TaskbarStatusText" Text="已关闭" FontSize="10"
@@ -658,17 +946,17 @@
                 <StackPanel>
                   <TextBlock Text="工具" FontSize="13" FontWeight="SemiBold"/>
                   <WrapPanel Margin="0,12,0,0">
-                    <Button x:Name="SettingsFolderButton" Style="{StaticResource GhostButton}" Content="打开文件夹"
+                    <Button x:Name="SettingsFolderButton" Style="{StaticResource NeoButton}" Content="打开文件夹"
                             Padding="12,6" FontSize="10.5"/>
-                    <Button x:Name="SettingsLogButton" Style="{StaticResource GhostButton}" Content="打开日志"
+                    <Button x:Name="SettingsLogButton" Style="{StaticResource NeoButton}" Content="打开日志"
                             Padding="12,6" FontSize="10.5" Margin="6,0,0,0"/>
-                    <Button x:Name="SettingsLiveLogButton" Style="{StaticResource GhostButton}" Content="实时日志"
+                    <Button x:Name="SettingsLiveLogButton" Style="{StaticResource NeoButton}" Content="实时日志"
                             Padding="12,6" FontSize="10.5" Margin="6,0,0,0"/>
-                    <Button x:Name="SettingsTrayHelpButton" Style="{StaticResource GhostButton}" Content="托盘帮助"
+                    <Button x:Name="SettingsTrayHelpButton" Style="{StaticResource NeoButton}" Content="托盘帮助"
                             Padding="12,6" FontSize="10.5" Margin="6,0,0,0"/>
-                    <Button x:Name="SettingsElevateButton" Style="{StaticResource GhostButton}" Content="以管理员身份重启"
+                    <Button x:Name="SettingsElevateButton" Style="{StaticResource NeoButton}" Content="以管理员身份重启"
                             Padding="12,6" FontSize="10.5" Margin="6,0,0,0"/>
-                    <Button x:Name="SettingsExitButton" Style="{StaticResource GhostButton}" Content="退出程序"
+                    <Button x:Name="SettingsExitButton" Style="{StaticResource NeoButton}" Content="退出程序"
                             Padding="12,6" FontSize="10.5" Margin="6,0,0,0"/>
                   </WrapPanel>
                   <TextBlock Text="本地读取 · 不联网" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"
@@ -679,10 +967,11 @@
           </ScrollViewer>
         </Border>
       </Grid>
+      </Grid>
     </Grid>
 
     <!-- Footer -->
-    <Grid Grid.Row="3" Margin="40,0,40,16">
+    <Grid Grid.Row="2" Margin="40,0,40,16">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="Auto"/>
@@ -697,7 +986,7 @@
       </StackPanel>
     </Grid>
 
-    <Border x:Name="Toast" Grid.RowSpan="4" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+    <Border x:Name="Toast" Grid.RowSpan="3" HorizontalAlignment="Center" VerticalAlignment="Bottom"
             Margin="0,0,0,58" Background="{DynamicResource ToastBgBrush}" BorderBrush="{DynamicResource ToastBorderBrush}"
             BorderThickness="1" CornerRadius="12" Padding="16,10" Opacity="0" IsHitTestVisible="False">
       <TextBlock x:Name="ToastText" Text="" FontSize="12" Foreground="{DynamicResource ToastTextBrush}"/>

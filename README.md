@@ -15,6 +15,7 @@ Windows 10/11 · .NET Framework 4.8 · 单文件 · 本地读取，不联网
 ## 功能
 
 - **自动识别**：扫描 HID 总线，按 VID/PID、用途页和厂商协议识别鼠标、耳机、键盘等设备。
+- **新拟物菜单与开关**：顶部菜单使用键帽质感，悬停上浮、按下转内阴影并下沉 2px、松开回弹，当前项保持按下并亮起指示灯；设置页和首页开关也改为新拟物滑动开关，带吸附回弹和开启指示灯。
 - **电量卡片**：环形电量、百分比、充电/休眠/低电量状态，低电量红色提醒；卡片会按窗口宽度自适应为 2–3 列并铺满可用宽度。
 - **接收器在线也能看到设备**：设备关机或休眠时保留卡片，显示「设备休眠」，唤醒后刷新即可。
 - **休眠保留上次电量**：设备进入休眠后会继续显示最后一次成功读取的电量和时间，并用淡色环 +「上次读数」标注；缓存保留 30 天。
@@ -284,7 +285,7 @@ GearPower.exe --tray-preview  生成托盘电池预览图
 
 ## 构建
 
-当前版本：**1.2.8**。需要 Windows 10/11 自带的 .NET Framework 4.8 与 `csc.exe`（无需 Visual Studio / .NET SDK）。
+当前版本：**1.3.0**。需要 Windows 10/11 自带的 .NET Framework 4.8 与 `csc.exe`（无需 Visual Studio / .NET SDK）。
 
 ```powershell
 git clone https://github.com/XAVIER0229/GearPower.git
@@ -384,7 +385,7 @@ Razer、ASUS ROG、HyperX、ATK、VXE、Lamzu、Logitech 等名称和商标归�
 
 ## 版本
 
-当前公开版本 **1.2.8**，变更见 [CHANGELOG.md](CHANGELOG.md)。当前发布说明见 [docs/releases](docs/releases/)，历史版本折叠归档在 [docs/releases/archive](docs/releases/archive/)。
+当前公开版本 **1.3.0**，变更见 [CHANGELOG.md](CHANGELOG.md)。当前发布说明见 [docs/releases](docs/releases/)，历史版本折叠归档在 [docs/releases/archive](docs/releases/archive/)。
 
 ## License
 

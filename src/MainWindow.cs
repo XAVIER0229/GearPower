@@ -147,6 +147,10 @@ namespace GearPower
             deviceTab = Find<Button>("DeviceTab");
             profileTab = Find<Button>("ProfileTab");
             settingsTab = Find<Button>("SettingsTab");
+            NeumorphicTabs.AttachFlat(batteryTab);
+            NeumorphicTabs.AttachFlat(deviceTab);
+            NeumorphicTabs.AttachFlat(profileTab);
+            NeumorphicTabs.AttachFlat(settingsTab);
             settingsView = Find<Border>("SettingsView");
             profileView = Find<Border>("ProfileView");
             profileHost = Find<Grid>("ProfileHost");
@@ -756,11 +760,12 @@ namespace GearPower
 
         private static void ApplyOptionState(Button button, bool active)
         {
-            button.Background = active ? Theme.AccentDim : Theme.GhostHover;
+            button.Background = active ? Theme.WithAlpha(Theme.AccentColor, 24) : Theme.Panel;
             button.Foreground = active ? Theme.Accent : Theme.Secondary;
             button.FontWeight = active ? FontWeights.SemiBold : FontWeights.Normal;
-            button.BorderBrush = active ? Theme.Accent : Theme.OptionBorder;
-            button.BorderThickness = new Thickness(1);
+            button.BorderBrush = active ? Theme.Accent : Brushes.Transparent;
+            button.BorderThickness = active ? new Thickness(1) : new Thickness(0);
+            button.Tag = active ? "selected" : null;
         }
 
         private void UpdateThemeDots()
@@ -1322,7 +1327,7 @@ namespace GearPower
             int index = 0;
             foreach (DeviceReading reading in readings)
             {
-                Border card = BuildCard(reading);
+                FrameworkElement card = BuildCard(reading);
                 cardPanel.Children.Add(card);
                 card.Opacity = 0;
                 var animation = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(240));
@@ -1378,7 +1383,7 @@ namespace GearPower
             {
                 foreach (UIElement child in cardPanel.Children)
                 {
-                    var card = child as Border;
+                    var card = child as FrameworkElement;
                     if (card != null) card.Width = cardWidth;
                 }
                 cardPanel.HorizontalAlignment = count < 3 && cardWidth >= maxCardWidth
@@ -1391,7 +1396,7 @@ namespace GearPower
             }
         }
 
-        private Border BuildCard(DeviceReading reading)
+        private FrameworkElement BuildCard(DeviceReading reading)
         {
             bool disconnected = reading.Disconnected;
             Color accent = disconnected ? Theme.MutedColor : Theme.LevelColor(reading.Percent, reading.Charging);
@@ -1407,11 +1412,11 @@ namespace GearPower
             var card = new Border();
             card.Width = 330;
             card.Height = 196;
-            card.CornerRadius = new CornerRadius(18);
+            card.CornerRadius = new CornerRadius(24);
             card.Background = Theme.CardBackground;
             card.BorderBrush = Theme.CardBorder;
-            card.BorderThickness = new Thickness(1);
-            card.Margin = new Thickness(0, 0, 16, 16);
+            card.BorderThickness = new Thickness(0);
+            card.Margin = new Thickness(0);
             card.ToolTip = BuildCardTooltip(reading);
             ToolTipService.SetInitialShowDelay(card, 350);
             ToolTipService.SetShowDuration(card, 60000);
@@ -1665,7 +1670,47 @@ namespace GearPower
                 menu.Items.Add(deleteItem);
             }
             card.ContextMenu = menu;
-            return card;
+
+            var wrapper = new Grid();
+            wrapper.Width = 330;
+            wrapper.Height = 196;
+            wrapper.Margin = new Thickness(0, 0, 22, 22);
+            wrapper.ClipToBounds = false;
+
+            var highlight = new Border();
+            highlight.CornerRadius = new CornerRadius(24);
+            highlight.Background = Theme.CardBackground;
+            highlight.IsHitTestVisible = false;
+            highlight.Effect = new DropShadowEffect
+            {
+                Color = ThemeManager.IsDark ? Color.FromRgb(0x3A, 0x34, 0x2E) : Colors.White,
+                BlurRadius = 14,
+                ShadowDepth = 6,
+                Direction = 225,
+                Opacity = ThemeManager.IsDark ? 0.35 : 0.95
+            };
+
+            var shadow = new Border();
+            shadow.CornerRadius = new CornerRadius(24);
+            shadow.Background = Theme.CardBackground;
+            shadow.IsHitTestVisible = false;
+            shadow.Effect = new DropShadowEffect
+            {
+                Color = ThemeManager.IsDark ? Color.FromRgb(0x05, 0x04, 0x03) : Color.FromRgb(0xD6, 0xC8, 0xBD),
+                BlurRadius = 14,
+                ShadowDepth = 6,
+                Direction = 45,
+                Opacity = ThemeManager.IsDark ? 0.85 : 0.95
+            };
+
+            card.Width = double.NaN;
+            card.Height = double.NaN;
+            card.HorizontalAlignment = HorizontalAlignment.Stretch;
+            card.VerticalAlignment = VerticalAlignment.Stretch;
+            wrapper.Children.Add(highlight);
+            wrapper.Children.Add(shadow);
+            wrapper.Children.Add(card);
+            return wrapper;
         }
 
         private void RenameDevice(DeviceReading reading)
@@ -2055,8 +2100,7 @@ namespace GearPower
 
         private static void SetTabState(Button tab, bool active)
         {
-            tab.Background = active ? Theme.TabActive : Brushes.Transparent;
-            tab.Foreground = active ? Theme.TabActiveForeground : Theme.TabInactiveForeground;
+            NeumorphicTabs.SetActive(tab, active);
         }
 
         private void CopyDiagnostics()

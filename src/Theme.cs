@@ -6,8 +6,8 @@ namespace GearPower
 {
     public static class Theme
     {
-        public static readonly FontFamily UiFont = new FontFamily("Microsoft YaHei UI");
-        public static readonly FontFamily NumberFont = new FontFamily("Segoe UI Variable Display, Segoe UI");
+        public static readonly FontFamily UiFont = new FontFamily("Bahnschrift");
+        public static readonly FontFamily NumberFont = new FontFamily("Consolas");
         public static readonly FontFamily IconFont = new FontFamily("Segoe MDL2 Assets");
 
         public static Color AccentColor
@@ -79,7 +79,17 @@ namespace GearPower
         public static Brush RowBorder { get { return GetBrush("RowBorderBrush"); } }
         public static Brush RowHover { get { return GetBrush("RowHoverBrush"); } }
         public static Brush RowSupported { get { return GetBrush("RowSupportedBrush"); } }
+        public static Brush TabBar { get { return GetBrush("TabBarBrush"); } }
         public static Brush TabActive { get { return GetBrush("TabActiveBrush"); } }
+        public static Brush SwitchOn { get { return GetBrush("SwitchOnBrush"); } }
+        public static Color SwitchOnColor
+        {
+            get
+            {
+                SolidColorBrush brush = SwitchOn as SolidColorBrush;
+                return brush == null ? AccentColor : brush.Color;
+            }
+        }
         public static Brush TabActiveForeground { get { return GetBrush("TabActiveForegroundBrush"); } }
         public static Brush TabInactiveForeground { get { return GetBrush("TabInactiveForegroundBrush"); } }
         public static Brush GhostHover { get { return GetBrush("GhostHoverBrush"); } }
@@ -95,13 +105,18 @@ namespace GearPower
             get { return (LinearGradientBrush)GetBrush("CardHoverBackgroundBrush"); }
         }
 
+        public static Color KeyAccentColor
+        {
+            get { return ThemeManager.IsDark ? Color.FromRgb(0x8A, 0x9C, 0xFF) : Color.FromRgb(0x2F, 0x4B, 0xD0); }
+        }
+
         public static Color LevelColor(int? percent, bool charging)
         {
-            if (charging) return AccentColor;
+            if (charging) return KeyAccentColor;
             if (!percent.HasValue) return MutedColor;
             if (percent.Value <= 15) return DangerColor;
             if (percent.Value <= 35) return WarnColor;
-            return AccentColor;
+            return KeyAccentColor;
         }
 
         public static Brush LevelBrush(int? percent, bool charging)
