@@ -6,7 +6,7 @@ namespace GearPower
 {
     public static class Theme
     {
-        public static readonly FontFamily UiFont = new FontFamily("Microsoft YaHei UI");
+        public static readonly FontFamily UiFont = new FontFamily("HarmonyOS Sans SC, Microsoft YaHei UI");
         public static readonly FontFamily LabelFont = new FontFamily("Bahnschrift");
         public static readonly FontFamily NumberFont = new FontFamily("Consolas");
         public static readonly FontFamily IconFont = new FontFamily("Segoe MDL2 Assets");
@@ -67,6 +67,7 @@ namespace GearPower
         public static Brush Accent { get { return GetBrush("AccentBrush"); } }
         public static Brush AccentDim { get { return GetBrush("AccentDimBrush"); } }
         public static Brush Warn { get { return GetBrush("WarnBrush"); } }
+        public static Brush WarnText { get { return GetBrush("WarnTextBrush"); } }
         public static Brush Danger { get { return GetBrush("DangerBrush"); } }
         public static Brush Info { get { return GetBrush("InfoBrush"); } }
         public static Brush Panel { get { return GetBrush("PanelBrush"); } }
@@ -96,19 +97,19 @@ namespace GearPower
         public static Brush GhostHover { get { return GetBrush("GhostHoverBrush"); } }
         public static Brush GhostPressed { get { return GetBrush("GhostPressedBrush"); } }
 
-        public static LinearGradientBrush CardBackground
+        public static Brush CardBackground
         {
-            get { return (LinearGradientBrush)GetBrush("CardBackgroundBrush"); }
+            get { return GetBrush("CardBackgroundBrush"); }
         }
 
-        public static LinearGradientBrush CardHoverBackground
+        public static Brush CardHoverBackground
         {
-            get { return (LinearGradientBrush)GetBrush("CardHoverBackgroundBrush"); }
+            get { return GetBrush("CardHoverBackgroundBrush"); }
         }
 
         public static Color KeyAccentColor
         {
-            get { return ThemeManager.IsDark ? Color.FromRgb(0x8A, 0x9C, 0xFF) : Color.FromRgb(0x2F, 0x4B, 0xD0); }
+            get { return Color.FromRgb(0x2F, 0x4B, 0xD0); }
         }
 
         public static Color LevelColor(int? percent, bool charging)

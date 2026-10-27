@@ -17,18 +17,19 @@ namespace GearPower
         {
             string result = null;
             var card = new Border();
-            card.Width = 420;
+            card.Width = 440;
             card.Background = Theme.Panel;
-            card.BorderBrush = Theme.PanelBorder;
+            card.BorderBrush = Theme.CardBorder;
             card.BorderThickness = new Thickness(1);
-            card.CornerRadius = new CornerRadius(14);
-            card.Padding = new Thickness(22);
+            card.CornerRadius = new CornerRadius(28);
+            card.Padding = new Thickness(28);
             card.Effect = new DropShadowEffect
             {
-                BlurRadius = 28,
-                ShadowDepth = 8,
-                Opacity = 0.36,
-                Color = Colors.Black
+                BlurRadius = 34,
+                ShadowDepth = 12,
+                Direction = 45,
+                Opacity = 0.26,
+                Color = Color.FromRgb(0xD6, 0xC8, 0xBD)
             };
             TextOptions.SetTextFormattingMode(card, TextFormattingMode.Display);
 
@@ -36,7 +37,7 @@ namespace GearPower
             var title = new TextBlock();
             title.Text = "重命名设备";
             title.FontFamily = Theme.UiFont;
-            title.FontSize = 15;
+            title.FontSize = 20;
             title.FontWeight = FontWeights.SemiBold;
             title.Foreground = Theme.Text;
             root.Children.Add(title);
@@ -113,9 +114,6 @@ namespace GearPower
 
             var save = MakeButton(owner, "保存", "PrimaryButton");
             save.Margin = new Thickness(8, 0, 0, 0);
-            save.Background = Theme.Accent;
-            save.Foreground = Brushes.White;
-            save.BorderBrush = Theme.Accent;
             save.FontWeight = FontWeights.SemiBold;
             save.Click += (s, e) =>
             {

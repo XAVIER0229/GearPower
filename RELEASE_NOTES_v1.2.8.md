@@ -30,7 +30,7 @@ GearPower = "...\GearPower.exe"
 1. 欢迎与自动扫描
 2. 电量卡片与历史设备
 3. 托盘与任务栏电量条
-4. 重命名、主题和设备适配
+4. 重命名、设置和设备适配
 
 - 支持上一步/下一步/跳过
 - 关闭后不再自动显示
@@ -50,7 +50,7 @@ GearPower = "...\GearPower.exe"
 SHA256：
 
 ```text
-93eafecc79baac9a2fe4c9b9681bf508e768dc3b6b573e0e707eea8866472022
+078b4699a7175ed297bddb7d0f6985003c7d78f7c1c08bcba60a8ebe9d5fb436
 ```
 
 文件大小：`385,024` 字节

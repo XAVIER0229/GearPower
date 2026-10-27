@@ -38,12 +38,15 @@ namespace GearPower
         private readonly TextBlock kpiHistoryValue;
         private readonly Ellipse summaryDot;
         private readonly WrapPanel cardPanel;
+        private readonly Border cardPad;
         private readonly ScrollViewer cardScroll;
         private readonly StackPanel emptyState;
         private readonly Button emptyRescan;
         private readonly Border inventoryView;
         private readonly StackPanel inventoryPanel;
         private readonly TextBlock inventoryCount;
+        private readonly Grid pageHeader;
+        private readonly Border summaryArea;
         private readonly Button copyDiagButton;
         private readonly Button deviceRequestButton;
         private readonly Button batteryTab;
@@ -51,17 +54,11 @@ namespace GearPower
         private readonly Button settingsTab;
         private readonly Button refreshButton;
         private readonly Border settingsView;
+        private readonly ScrollViewer settingsScroll;
         private readonly Border profileView;
         private readonly Grid profileHost;
         private readonly Button profileTab;
         private DeviceProfileView profileController;
-        private readonly Button themeSystemOption;
-        private readonly Button themeLightOption;
-        private readonly Button themeDarkOption;
-        private readonly Button accentGreenOption;
-        private readonly Button accentPinkOption;
-        private readonly Button accentYellowOption;
-        private readonly Button accentBlueOption;
         private readonly Button refresh30Option;
         private readonly Button refresh60Option;
         private readonly Button refresh300Option;
@@ -95,7 +92,6 @@ namespace GearPower
 
         private readonly DispatcherTimer refreshTimer;
         private readonly DispatcherTimer toastTimer;
-        private readonly DispatcherTimer themeTimer;
         private TrayController tray;
         private bool exiting;
         private bool restarting;
@@ -142,6 +138,7 @@ namespace GearPower
             kpiHistoryValue = Find<TextBlock>("KpiHistoryValue");
             summaryDot = Find<Ellipse>("SummaryDot");
             cardPanel = Find<WrapPanel>("CardPanel");
+            cardPad = Find<Border>("CardPad");
             cardScroll = Find<ScrollViewer>("CardScroll");
             cardScroll.SizeChanged += (s, e) => UpdateCardLayout();
             emptyState = Find<StackPanel>("EmptyState");
@@ -149,26 +146,18 @@ namespace GearPower
             inventoryView = Find<Border>("InventoryView");
             inventoryPanel = Find<StackPanel>("InventoryPanel");
             inventoryCount = Find<TextBlock>("InventoryCount");
+            pageHeader = Find<Grid>("PageHeader");
+            summaryArea = Find<Border>("SummaryArea");
             copyDiagButton = Find<Button>("CopyDiagButton");
             deviceRequestButton = Find<Button>("DeviceRequestButton");
             batteryTab = Find<Button>("BatteryTab");
             deviceTab = Find<Button>("DeviceTab");
             profileTab = Find<Button>("ProfileTab");
             settingsTab = Find<Button>("SettingsTab");
-            NeumorphicTabs.AttachFlat(batteryTab);
-            NeumorphicTabs.AttachFlat(deviceTab);
-            NeumorphicTabs.AttachFlat(profileTab);
-            NeumorphicTabs.AttachFlat(settingsTab);
             settingsView = Find<Border>("SettingsView");
+            settingsScroll = Find<ScrollViewer>("SettingsScroll");
             profileView = Find<Border>("ProfileView");
             profileHost = Find<Grid>("ProfileHost");
-            themeSystemOption = Find<Button>("ThemeSystemOption");
-            themeLightOption = Find<Button>("ThemeLightOption");
-            themeDarkOption = Find<Button>("ThemeDarkOption");
-            accentGreenOption = Find<Button>("AccentGreenOption");
-            accentPinkOption = Find<Button>("AccentPinkOption");
-            accentYellowOption = Find<Button>("AccentYellowOption");
-            accentBlueOption = Find<Button>("AccentBlueOption");
             refresh30Option = Find<Button>("Refresh30Option");
             refresh60Option = Find<Button>("Refresh60Option");
             refresh300Option = Find<Button>("Refresh300Option");
@@ -206,9 +195,6 @@ namespace GearPower
             toastTimer = new DispatcherTimer();
             toastTimer.Interval = TimeSpan.FromSeconds(2.2);
             toastTimer.Tick += (s, e) => { toastTimer.Stop(); HideToast(); };
-            themeTimer = new DispatcherTimer();
-            themeTimer.Interval = TimeSpan.FromSeconds(2);
-            themeTimer.Tick += (s, e) => ThemeManager.RefreshSystem();
 
             LoadSettings();
 
@@ -231,13 +217,6 @@ namespace GearPower
             deviceTab.Click += (s, e) => ShowTab(true);
             profileTab.Click += (s, e) => ShowProfile();
             settingsTab.Click += (s, e) => ShowSettings();
-            themeSystemOption.Click += (s, e) => SetThemeMode(ThemeMode.System);
-            themeLightOption.Click += (s, e) => SetThemeMode(ThemeMode.Light);
-            themeDarkOption.Click += (s, e) => SetThemeMode(ThemeMode.Dark);
-            accentGreenOption.Click += (s, e) => SetAccentPreset(AccentPreset.Green);
-            accentPinkOption.Click += (s, e) => SetAccentPreset(AccentPreset.Pink);
-            accentYellowOption.Click += (s, e) => SetAccentPreset(AccentPreset.Yellow);
-            accentBlueOption.Click += (s, e) => SetAccentPreset(AccentPreset.Blue);
             refresh30Option.Click += (s, e) => SetRefreshSeconds(30);
             refresh60Option.Click += (s, e) => SetRefreshSeconds(60);
             refresh300Option.Click += (s, e) => SetRefreshSeconds(300);
@@ -256,7 +235,6 @@ namespace GearPower
             taskbarDangerColorButton.Click += (s, e) => PickTaskbarColor(2);
             taskbarColorResetButton.Click += (s, e) => ResetTaskbarColors();
             taskbarContrastSwitch.Click += (s, e) => ToggleTaskbarContrast();
-            ThemeManager.Changed += (s, e) => OnThemeChanged();
             window.KeyDown += Window_KeyDown;
             window.Loaded += Window_Loaded;
             window.SourceInitialized += (s, e) =>
@@ -290,7 +268,6 @@ namespace GearPower
                 }
                 refreshTimer.Stop();
                 toastTimer.Stop();
-                themeTimer.Stop();
                 if (tray != null)
                 {
                     tray.Dispose();
@@ -316,7 +293,6 @@ namespace GearPower
             UpdateMaximizeGlyph();
             RefreshSettingsState();
 
-            themeTimer.Start();
             if (demo)
             {
                 footerStatus.Text = "演示模式 · 示例数据";
@@ -715,88 +691,19 @@ namespace GearPower
             }
         }
 
-        private void OnThemeChanged()
-        {
-            if (tray != null)
-            {
-                tray.Update(lastConnectedReadings);
-            }
-            if (taskbarWidget != null) taskbarWidget.RefreshTheme();
-            if (showingSettings) ShowSettings();
-            else ShowTab(showingDevices);
-            RenderCards(lastReadings);
-            RenderInventory(lastInventory);
-            UpdateThemeDots();
-            RefreshSettingsState();
-        }
-
-        private void SetThemeMode(ThemeMode mode)
-        {
-            ThemeManager.SetMode(mode);
-            RefreshSettingsState();
-            ShowToast(mode == ThemeMode.System ? "外观：跟随系统" :
-                mode == ThemeMode.Light ? "外观：浅色" : "外观：深色");
-        }
-
-        private void SetAccentPreset(AccentPreset preset)
-        {
-            ThemeManager.SetAccent(preset);
-            RefreshSettingsState();
-            ShowToast("强调色：" + AccentLabel(preset));
-        }
-
-        private static string AccentLabel(AccentPreset preset)
-        {
-            switch (preset)
-            {
-                case AccentPreset.Pink: return "粉色";
-                case AccentPreset.Yellow: return "黄色";
-                case AccentPreset.Blue: return "蓝色";
-                default: return "绿色";
-            }
-        }
-
         private static void SetOptionState(Button button, bool active)
-        {
-            ApplyOptionState(button, active);
-        }
-
-        private static void SetAccentOptionState(Button button, bool active)
         {
             ApplyOptionState(button, active);
         }
 
         private static void ApplyOptionState(Button button, bool active)
         {
-            button.Background = active ? Theme.WithAlpha(Theme.AccentColor, 24) : Theme.Panel;
+            button.Background = active ? Theme.Panel : Brushes.Transparent;
             button.Foreground = active ? Theme.Accent : Theme.Secondary;
             button.FontWeight = active ? FontWeights.SemiBold : FontWeights.Normal;
-            button.BorderBrush = active ? Theme.Accent : Brushes.Transparent;
-            button.BorderThickness = active ? new Thickness(1) : new Thickness(0);
+            button.BorderBrush = Brushes.Transparent;
+            button.BorderThickness = new Thickness(0);
             button.Tag = active ? "selected" : null;
-        }
-
-        private void UpdateThemeDots()
-        {
-            summaryDot.Fill = SummaryDotBrush();
-            footerDot.Fill = lastConnectedReadings.Count == 0 ? Theme.Muted : Theme.Accent;
-        }
-
-        private Brush SummaryDotBrush()
-        {
-            if (lastConnectedReadings.Count == 0) return Theme.Muted;
-            var withLevel = lastConnectedReadings.Where(r => r.Percent.HasValue).ToList();
-            if (withLevel.Count > 1)
-            {
-                int min = withLevel.Min(r => r.Percent.Value);
-                return min <= 20 ? Theme.Danger : min <= 40 ? Theme.Warn : Theme.Accent;
-            }
-            if (withLevel.Count == 1)
-            {
-                int only = withLevel[0].Percent.Value;
-                return only <= 20 ? Theme.Danger : only <= 40 ? Theme.Warn : Theme.Accent;
-            }
-            return lastConnectedReadings.All(r => r.Asleep) ? Theme.Warn : Theme.Muted;
         }
 
         private void LoadSettings()
@@ -1009,14 +916,6 @@ namespace GearPower
 
         private void RefreshSettingsState()
         {
-            if (themeSystemOption == null) return;
-            SetOptionState(themeSystemOption, ThemeManager.Mode == ThemeMode.System);
-            SetOptionState(themeLightOption, ThemeManager.Mode == ThemeMode.Light);
-            SetOptionState(themeDarkOption, ThemeManager.Mode == ThemeMode.Dark);
-            SetAccentOptionState(accentGreenOption, ThemeManager.Accent == AccentPreset.Green);
-            SetAccentOptionState(accentPinkOption, ThemeManager.Accent == AccentPreset.Pink);
-            SetAccentOptionState(accentYellowOption, ThemeManager.Accent == AccentPreset.Yellow);
-            SetAccentOptionState(accentBlueOption, ThemeManager.Accent == AccentPreset.Blue);
             SetOptionState(refresh30Option, refreshSeconds == 30);
             SetOptionState(refresh60Option, refreshSeconds == 60);
             SetOptionState(refresh300Option, refreshSeconds == 300);
@@ -1102,7 +1001,7 @@ namespace GearPower
             taskbarHighContrast = !taskbarHighContrast;
             SaveSettings();
             ApplyTaskbarColors();
-            ShowToast(taskbarHighContrast ? "任务栏已切换为高对比度" : "任务栏已跟随主题");
+            ShowToast(taskbarHighContrast ? "任务栏已切换为高对比度" : "任务栏已切换为浅色玻璃条");
         }
 
         private static void StyleColorButton(Button button, Color color)
@@ -1373,13 +1272,14 @@ namespace GearPower
             if (double.IsNaN(available) || available <= 0) available = cardScroll.ViewportWidth;
             if (double.IsNaN(available) || available <= 0) return;
             available -= 4;
+            if (cardPad != null) available -= cardPad.Padding.Left + cardPad.Padding.Right;
             if (cardScroll.ComputedVerticalScrollBarVisibility == Visibility.Visible)
                 available -= SystemParameters.VerticalScrollBarWidth;
 
-            const double gap = 16;
-            const double minCardWidth = 275;
-            const double maxCardWidth = 380;
-            int maxColumns = Math.Min(3, count);
+            const double gap = 18;
+            const double minCardWidth = 320;
+            const double maxCardWidth = 440;
+            int maxColumns = Math.Min(2, count);
             int columns = 1;
             for (int candidate = maxColumns; candidate >= 1; candidate--)
             {
@@ -1398,12 +1298,18 @@ namespace GearPower
             adjustingCards = true;
             try
             {
-                foreach (UIElement child in cardPanel.Children)
+                int rows = (count + columns - 1) / columns;
+                int lastRowStart = (rows - 1) * columns;
+                for (int index = 0; index < cardPanel.Children.Count; index++)
                 {
-                    var card = child as FrameworkElement;
-                    if (card != null) card.Width = cardWidth;
+                    var card = cardPanel.Children[index] as FrameworkElement;
+                    if (card == null) continue;
+                    card.Width = cardWidth;
+                    card.Margin = index >= lastRowStart
+                        ? new Thickness(0, 0, 18, 0)
+                        : new Thickness(0, 0, 18, 18);
                 }
-                cardPanel.HorizontalAlignment = count < 3 && cardWidth >= maxCardWidth
+                cardPanel.HorizontalAlignment = count < 2 && cardWidth >= maxCardWidth
                     ? HorizontalAlignment.Center
                     : HorizontalAlignment.Left;
             }
@@ -1428,9 +1334,9 @@ namespace GearPower
 
             var card = new Border();
             card.Width = 330;
-            card.Height = 196;
+            card.Height = 176;
             card.CornerRadius = new CornerRadius(24);
-            card.Background = Theme.CardBackground;
+            card.Background = Theme.Panel;
             card.BorderBrush = Theme.CardBorder;
             card.BorderThickness = new Thickness(1);
             card.Margin = new Thickness(0);
@@ -1438,20 +1344,8 @@ namespace GearPower
             ToolTipService.SetInitialShowDelay(card, 350);
             ToolTipService.SetShowDuration(card, 60000);
 
-            Brush normalBorder = Theme.CardBorder;
-            card.MouseEnter += (s, e) =>
-            {
-                card.Background = Theme.CardHoverBackground;
-                card.BorderBrush = Theme.WithAlpha(accent, 110);
-            };
-            card.MouseLeave += (s, e) =>
-            {
-                card.Background = Theme.CardBackground;
-                card.BorderBrush = normalBorder;
-            };
-
             var root = new Grid();
-            root.Margin = new Thickness(18, 15, 18, 13);
+            root.Margin = new Thickness(20, 14, 20, 10);
             root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
             root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
@@ -1484,13 +1378,13 @@ namespace GearPower
             titleStack.VerticalAlignment = VerticalAlignment.Center;
             var name = new TextBlock();
             name.Text = reading.Name;
-            name.FontSize = 14.5;
+            name.FontSize = 15.5;
             name.FontWeight = FontWeights.SemiBold;
             name.TextTrimming = TextTrimming.CharacterEllipsis;
             name.ToolTip = reading.Name;
             var sub = new TextBlock();
             sub.Text = reading.Vendor + " · " + reading.Transport;
-            sub.FontSize = 10;
+            sub.FontSize = 10.5;
             sub.Foreground = Theme.Muted;
             sub.Margin = new Thickness(0, 3, 0, 0);
             sub.TextTrimming = TextTrimming.CharacterEllipsis;
@@ -1549,16 +1443,16 @@ namespace GearPower
                 if (badgeText != null)
                 {
                     var badge = new Border();
-                    badge.CornerRadius = new CornerRadius(6);
-                    badge.Background = Theme.WithAlpha(badgeColor, 24);
-                    badge.BorderBrush = Theme.WithAlpha(badgeColor, 50);
+                    badge.CornerRadius = new CornerRadius(8);
+                    badge.Background = Theme.WithAlpha(badgeColor, 22);
+                    badge.BorderBrush = Theme.WithAlpha(badgeColor, 46);
                     badge.BorderThickness = new Thickness(1);
-                    badge.Padding = new Thickness(6, 2, 6, 2);
+                    badge.Padding = new Thickness(7, 3, 7, 3);
                     badge.VerticalAlignment = VerticalAlignment.Center;
                     badge.Margin = new Thickness(6, 0, 0, 0);
                     var badgeLabel = new TextBlock();
                     badgeLabel.Text = badgeText;
-                    badgeLabel.FontSize = 9;
+                    badgeLabel.FontSize = 10;
                     badgeLabel.Foreground = new SolidColorBrush(badgeColor);
                     badge.Child = badgeLabel;
                     actions.Children.Add(badge);
@@ -1595,13 +1489,13 @@ namespace GearPower
             var number = new TextBlock();
             number.Text = reading.Percent.HasValue ? reading.Percent.Value.ToString(CultureInfo.InvariantCulture) : "—";
             number.FontFamily = Theme.NumberFont;
-            number.FontSize = 24;
+            number.FontSize = 25;
             number.FontWeight = FontWeights.SemiBold;
             number.Foreground = accentBrush;
             number.HorizontalAlignment = HorizontalAlignment.Center;
             var unit = new TextBlock();
             unit.Text = reading.Percent.HasValue ? "%" : "";
-            unit.FontSize = 9;
+            unit.FontSize = 9.5;
             unit.Foreground = Theme.Muted;
             unit.HorizontalAlignment = HorizontalAlignment.Center;
             unit.Margin = new Thickness(0, -3, 0, 0);
@@ -1619,10 +1513,12 @@ namespace GearPower
             status.Text = StatusText(reading);
             status.FontSize = 13;
             status.FontWeight = FontWeights.SemiBold;
-            status.Foreground = reading.Asleep ? Theme.Secondary : accentBrush;
+            bool lowLevel = !reading.Charging && reading.Percent.HasValue && reading.Percent.Value <= 35;
+            status.Foreground = reading.Asleep ? Theme.Secondary :
+                (lowLevel ? Theme.WarnText : accentBrush);
             var hint = new TextBlock();
             hint.Text = HintText(reading);
-            hint.FontSize = 10;
+            hint.FontSize = 10.5;
             hint.Foreground = Theme.Secondary;
             hint.Margin = new Thickness(0, 4, 0, 0);
             hint.TextWrapping = TextWrapping.Wrap;
@@ -1631,16 +1527,16 @@ namespace GearPower
             info.Children.Add(hint);
 
             var chip = new Border();
-            chip.CornerRadius = new CornerRadius(6);
+            chip.CornerRadius = new CornerRadius(7);
             chip.Background = Theme.Input;
             chip.BorderBrush = Theme.InputBorder;
             chip.BorderThickness = new Thickness(1);
-            chip.Padding = new Thickness(6, 2, 6, 2);
+            chip.Padding = new Thickness(7, 3, 7, 3);
             chip.HorizontalAlignment = HorizontalAlignment.Left;
-            chip.Margin = new Thickness(0, 7, 0, 0);
+            chip.Margin = new Thickness(0, 8, 0, 0);
             var chipText = new TextBlock();
             chipText.Text = reading.Protocol;
-            chipText.FontSize = 8.5;
+            chipText.FontSize = 9.5;
             chipText.Foreground = Theme.Muted;
             chip.Child = chipText;
             info.Children.Add(chip);
@@ -1658,14 +1554,14 @@ namespace GearPower
             updated.Text = reading.Disconnected
                 ? "上次连接 " + LastSeenText(reading)
                 : (reading.FromCache ? "上次 " : "更新于 ") + reading.Updated.ToString("HH:mm");
-            updated.FontSize = 9;
+            updated.FontSize = 9.5;
             updated.Foreground = Theme.Muted;
             updated.VerticalAlignment = VerticalAlignment.Center;
             footer.Children.Add(updated);
 
             var transport = new TextBlock();
             transport.Text = reading.Transport;
-            transport.FontSize = 9;
+            transport.FontSize = 9.5;
             transport.Foreground = Theme.Muted;
             transport.VerticalAlignment = VerticalAlignment.Center;
             Grid.SetColumn(transport, 1);
@@ -1690,34 +1586,34 @@ namespace GearPower
 
             var wrapper = new Grid();
             wrapper.Width = 330;
-            wrapper.Height = 196;
-            wrapper.Margin = new Thickness(0, 0, 22, 22);
+            wrapper.Height = 176;
+            wrapper.Margin = new Thickness(0, 0, 18, 18);
             wrapper.ClipToBounds = false;
 
             var highlight = new Border();
             highlight.CornerRadius = new CornerRadius(24);
-            highlight.Background = Theme.CardBackground;
+            highlight.Background = Theme.Panel;
             highlight.IsHitTestVisible = false;
             highlight.Effect = new DropShadowEffect
             {
-                Color = ThemeManager.IsDark ? Color.FromRgb(0x3A, 0x34, 0x2E) : Colors.White,
+                Color = Colors.White,
                 BlurRadius = 22,
                 ShadowDepth = 9,
                 Direction = 225,
-                Opacity = ThemeManager.IsDark ? 0.35 : 0.78
+                Opacity = 0.78
             };
 
             var shadow = new Border();
             shadow.CornerRadius = new CornerRadius(24);
-            shadow.Background = Theme.CardBackground;
+            shadow.Background = Theme.Panel;
             shadow.IsHitTestVisible = false;
             shadow.Effect = new DropShadowEffect
             {
-                Color = ThemeManager.IsDark ? Color.FromRgb(0x05, 0x04, 0x03) : Color.FromRgb(0xD6, 0xC8, 0xBD),
+                Color = Color.FromRgb(0xD6, 0xC8, 0xBD),
                 BlurRadius = 24,
                 ShadowDepth = 11,
                 Direction = 45,
-                Opacity = ThemeManager.IsDark ? 0.85 : 0.62
+                Opacity = 0.62
             };
 
             card.Width = double.NaN;
@@ -2058,12 +1954,20 @@ namespace GearPower
             grid.Children.Add(block);
         }
 
+        private void SetBatteryChromeVisible(bool visible)
+        {
+            Visibility state = visible ? Visibility.Visible : Visibility.Collapsed;
+            if (pageHeader != null) pageHeader.Visibility = state;
+            if (summaryArea != null) summaryArea.Visibility = state;
+        }
+
         private void ShowTab(bool devices)
         {
             showingDevices = devices;
             showingSettings = false;
             settingsView.Visibility = Visibility.Collapsed;
             profileView.Visibility = Visibility.Collapsed;
+            SetBatteryChromeVisible(!devices);
             SetTabState(batteryTab, !devices);
             SetTabState(deviceTab, devices);
             SetTabState(profileTab, false);
@@ -2087,6 +1991,7 @@ namespace GearPower
         {
             showingDevices = false;
             showingSettings = false;
+            SetBatteryChromeVisible(false);
             profileView.Visibility = Visibility.Visible;
             inventoryView.Visibility = Visibility.Collapsed;
             settingsView.Visibility = Visibility.Collapsed;
@@ -2103,11 +2008,13 @@ namespace GearPower
         {
             showingSettings = true;
             showingDevices = false;
+            SetBatteryChromeVisible(false);
             settingsView.Visibility = Visibility.Visible;
             profileView.Visibility = Visibility.Collapsed;
             inventoryView.Visibility = Visibility.Collapsed;
             cardScroll.Visibility = Visibility.Collapsed;
             emptyState.Visibility = Visibility.Collapsed;
+            if (settingsScroll != null) settingsScroll.ScrollToTop();
             SetTabState(batteryTab, false);
             SetTabState(deviceTab, false);
             SetTabState(profileTab, false);
@@ -2117,7 +2024,11 @@ namespace GearPower
 
         private static void SetTabState(Button tab, bool active)
         {
-            NeumorphicTabs.SetActive(tab, active);
+            tab.Tag = active ? "active" : null;
+            tab.Foreground = active ? Theme.Accent : Theme.Secondary;
+            tab.ApplyTemplate();
+            Ellipse dot = tab.Template == null ? null : tab.Template.FindName("Dot", tab) as Ellipse;
+            if (dot != null) dot.Visibility = active ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void CopyDiagnostics()

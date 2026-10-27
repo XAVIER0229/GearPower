@@ -45,27 +45,35 @@ namespace GearPower
             this.rescan = rescan;
             this.demo = demo;
             SetResourceReference(ForegroundProperty, "TextPrimaryBrush");
+            FontFamily = Theme.UiFont;
 
             var root = new DockPanel();
-            root.Margin = new Thickness(18, 14, 18, 14);
+            root.Margin = new Thickness(24, 20, 24, 20);
             Content = root;
 
             var heading = new StackPanel();
-            heading.Margin = new Thickness(0, 0, 0, 10);
+            heading.Margin = new Thickness(0, 0, 0, 12);
             DockPanel.SetDock(heading, Dock.Top);
             root.Children.Add(heading);
+            var kicker = new TextBlock();
+            kicker.Text = "PROFILES / LOCAL";
+            kicker.FontFamily = Theme.LabelFont;
+            kicker.FontSize = 9;
+            kicker.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+            heading.Children.Add(kicker);
             var title = new TextBlock();
             title.Text = "设备适配";
-            title.FontSize = 18;
+            title.FontSize = 24;
             title.FontWeight = FontWeights.SemiBold;
+            title.Margin = new Thickness(0, 4, 0, 0);
             title.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimaryBrush");
             heading.Children.Add(title);
             var subtitle = new TextBlock();
             subtitle.Text = "从接口生成草稿 → 填写查询和字段 → 测试 → 导入启用。导入后无需重新编译。";
-            subtitle.FontSize = 10.5;
+            subtitle.FontSize = 11;
             subtitle.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
             subtitle.TextWrapping = TextWrapping.Wrap;
-            subtitle.Margin = new Thickness(0, 5, 0, 0);
+            subtitle.Margin = new Thickness(0, 4, 0, 0);
             heading.Children.Add(subtitle);
 
             var bottom = new StackPanel();
@@ -90,15 +98,15 @@ namespace GearPower
 
             var grid = new Grid();
             root.Children.Add(grid);
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(210) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(12) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(230) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(18) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
             var left = new DockPanel();
             grid.Children.Add(left);
             var leftTitle = new TextBlock();
             leftTitle.Text = "已加载的配置";
-            leftTitle.FontSize = 11;
+            leftTitle.FontSize = 12;
             leftTitle.FontWeight = FontWeights.SemiBold;
             leftTitle.SetResourceReference(TextBlock.ForegroundProperty, "TextPrimaryBrush");
             leftTitle.Margin = new Thickness(0, 0, 0, 7);
@@ -108,7 +116,7 @@ namespace GearPower
             profiles.SetResourceReference(ForegroundProperty, "TextPrimaryBrush");
             profiles.SetResourceReference(BorderBrushProperty, "InputBorderBrush");
             profiles.BorderThickness = new Thickness(1);
-            profiles.FontSize = 10.5;
+            profiles.FontSize = 11;
             profiles.SelectionChanged += delegate
             {
                 DeviceProfile selected = profiles.SelectedItem as DeviceProfile;
@@ -139,7 +147,7 @@ namespace GearPower
             devices.SetResourceReference(ForegroundProperty, "TextPrimaryBrush");
             devices.SetResourceReference(BorderBrushProperty, "InputBorderBrush");
             devices.BorderThickness = new Thickness(1);
-            devices.FontSize = 10.5;
+            devices.FontSize = 11;
             devices.Margin = new Thickness(0, 0, 8, 0);
             devices.MinWidth = 160;
             generate.Children.Add(devices);
@@ -230,11 +238,12 @@ namespace GearPower
             var button = new Button();
             button.Content = text;
             button.FontSize = 10;
-            button.Padding = new Thickness(9, 5, 9, 5);
-            button.Margin = new Thickness(0, 0, 5, 4);
+            button.Height = 32;
+            button.Padding = new Thickness(10, 4, 10, 4);
+            button.Margin = new Thickness(0, 0, 6, 6);
             try
             {
-                Style style = owner != null ? owner.TryFindResource("GhostButton") as Style : null;
+                Style style = owner != null ? owner.TryFindResource("NeoButton") as Style : null;
                 if (style != null) button.Style = style;
             }
             catch

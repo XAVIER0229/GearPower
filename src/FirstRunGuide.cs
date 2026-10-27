@@ -70,11 +70,11 @@ namespace GearPower
             {
                 Glyph = "\uE70F",
                 Title = "按你的习惯使用",
-                Subtitle = "主题、重命名和设备适配都在设置里",
+                Subtitle = "侧栏导航、重命名和设备适配",
                 Bullets = new[]
                 {
                     "卡片右上角铅笔或右键菜单可以重命名设备。",
-                    "设置页可切换主题、刷新频率、托盘和开机启动。",
+                    "设置页集中管理刷新频率、托盘、启动和任务栏工具。",
                     "遇到新设备，可在「设备适配」页添加 JSON 配置。"
                 }
             }
@@ -138,18 +138,19 @@ namespace GearPower
             bool finished = false;
 
             var card = new Border();
-            card.Width = 640;
+            card.Width = 680;
             card.Background = Theme.Panel;
-            card.BorderBrush = Theme.PanelBorder;
+            card.BorderBrush = Theme.CardBorder;
             card.BorderThickness = new Thickness(1);
-            card.CornerRadius = new CornerRadius(16);
-            card.Padding = new Thickness(28);
+            card.CornerRadius = new CornerRadius(28);
+            card.Padding = new Thickness(32);
             card.Effect = new DropShadowEffect
             {
-                BlurRadius = 34,
-                ShadowDepth = 10,
-                Opacity = 0.38,
-                Color = Colors.Black
+                BlurRadius = 38,
+                ShadowDepth = 14,
+                Direction = 45,
+                Opacity = 0.25,
+                Color = Color.FromRgb(0xD6, 0xC8, 0xBD)
             };
             TextOptions.SetTextFormattingMode(card, TextFormattingMode.Display);
 
@@ -181,12 +182,12 @@ namespace GearPower
             heading.VerticalAlignment = VerticalAlignment.Center;
             var title = new TextBlock();
             title.FontFamily = Theme.UiFont;
-            title.FontSize = 19;
+            title.FontSize = 24;
             title.FontWeight = FontWeights.SemiBold;
             title.Foreground = Theme.Text;
             var subtitle = new TextBlock();
             subtitle.FontFamily = Theme.UiFont;
-            subtitle.FontSize = 11;
+            subtitle.FontSize = 11.5;
             subtitle.Foreground = Theme.Secondary;
             subtitle.Margin = new Thickness(0, 5, 0, 0);
             heading.Children.Add(title);
@@ -228,9 +229,6 @@ namespace GearPower
 
             var next = MakeButton(owner, "下一步", "PrimaryButton");
             next.Margin = new Thickness(8, 0, 0, 0);
-            next.Background = Theme.Accent;
-            next.Foreground = Brushes.White;
-            next.BorderBrush = Theme.Accent;
             next.FontWeight = FontWeights.SemiBold;
             actions.Children.Add(next);
 

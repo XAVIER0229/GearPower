@@ -8,15 +8,17 @@ Windows 10/11 · .NET Framework 4.8 · 单文件 · 本地读取，不联网
 
 [![build](https://github.com/XAVIER0229/GearPower/actions/workflows/build.yml/badge.svg)](https://github.com/XAVIER0229/GearPower/actions/workflows/build.yml)
 
-![主界面](assets/screenshot-main.png)
+![主界面](assets/qiju-main.png)
+
+> **Qiju Soft UI 重构版**：以暖米白 `#F2E8E0`、钴蓝 `#2F4BD0`、警示橙 `#E2552D` 和双重柔和阴影重建整个界面；左侧导航、侧栏设备概览卡、双列设备卡与设置页全部重新排布，应用不再提供浅色/深色或强调色切换。
 
 > 实机测试：在本机读到 **ATK Zero（Nordic 54 协议）100%**、**HyperX Cloud Flight Wireless 60%**、**Lamzu Maya X 8K Dongle 31%** 和 **MCHOSE K7 Ultra（Realtek 0xFF01）83%**；接收器在线但设备休眠时，会显示「设备休眠」而不是直接消失。
 
 ## 功能
 
 - **自动识别**：扫描 HID 总线，按 VID/PID、用途页和厂商协议识别鼠标、耳机、键盘等设备。
-- **新拟物菜单与开关**：顶部菜单使用键帽质感，悬停上浮、按下转内阴影并下沉 2px、松开回弹，当前项保持按下并亮起指示灯；设置页和首页开关也改为新拟物滑动开关，带吸附回弹和开启指示灯。
-- **电量卡片**：环形电量、百分比、充电/休眠/低电量状态，低电量红色提醒；卡片会按窗口宽度自适应为 2–3 列并铺满可用宽度。
+- **电量卡片**：环形电量、百分比、充电/休眠/低电量状态，低电量橙色提醒；卡片固定双列自适应，保留足够的阅读留白。
+- **Qiju Soft UI**：左侧固定导航、顶部页头、侧栏底部设备概览卡、双列设备卡；浅色单一主题，钴蓝用于当前/关键数据，警示橙只用于低电量与异常状态。
 - **接收器在线也能看到设备**：设备关机或休眠时保留卡片，显示「设备休眠」，唤醒后刷新即可。
 - **休眠保留上次电量**：设备进入休眠后会继续显示最后一次成功读取的电量和时间，并用淡色环 +「上次读数」标注；缓存保留 30 天。
 - **历史设备**：连接过本机的设备会保留卡片并标记「未连接」；未连接卡片可单独删除，历史不会进入托盘或任务栏。数据保存在 `%LOCALAPPDATA%\GearPower\device-history.tsv`。
@@ -28,8 +30,6 @@ Windows 10/11 · .NET Framework 4.8 · 单文件 · 本地读取，不联网
 - **蓝牙电量开关**：首页右上角「蓝牙」开关可关闭蓝牙耳机、Apple 键盘和系统 HFP 设备的电量读取；关闭后历史蓝牙卡片暂时隐藏，重新开启即恢复。
 - **开机自动启动**：设置 → 启动，默认关闭；开启后登录 Windows 会正常显示主窗口、托盘和任务栏电量条，不创建计划任务、不需要管理员。
 - **首次功能引导**：第一次打开时用 4 页引导介绍电量卡片、历史设备、托盘/任务栏和重命名；设置里可重新查看。
-- **浅色 / 深色 / 跟随系统**：在「设置 → 外观」切换，跟随系统时会在 Windows 切换白天/黑夜后自动更新。
-- **强调色**：绿色 / 粉色 / 黄色 / 蓝色四套强调色，浅色和深色主题各有对应色值。
 - **设备支持入口**：设备清单底部提供「提交给开发者」按钮，打开 GitHub 新建 Issue，方便附上诊断信息。
 - **托盘后台**：关闭窗口后继续在系统托盘运行；托盘图标是 **iPhone 风格电池**，不带外圈底色，只用电池轮廓和填充比例显示优先设备：未充电设备优先，再取其中电量最低者；正在充电的低电量设备不会抢占置顶。
 - **低电量配色**：电池填充按电量变色——绿色正常、橙色偏低、红色低电量；所有设备仍在悬停卡片和右键菜单中列出。
@@ -56,16 +56,16 @@ Windows 10/11 · .NET Framework 4.8 · 单文件 · 本地读取，不联网
 
 ## 设置
 
-顶部「设置」页集中管理外观、刷新、托盘和工具，主界面保留「电量 / 设备清单 / 设备适配 / 设置」四个页签和刷新按钮：
+左侧「设置」页集中管理刷新、托盘、启动、任务栏和工具；主界面固定为「电量 / 设备清单 / 设备适配 / 设置」四个导航项，不再有顶部页签或外观切换：
 
-![设置页](assets/screenshot-settings.png)
+![设置页](assets/qiju-settings.png)
 
-- **外观**：跟随系统 / 浅色 / 深色，保存到 `HKCU\Software\GearPower\ThemeMode`。
+- **单一主题**：Qiju Soft UI 浅色主题，暖米白底、钴蓝强调、双重柔和阴影；没有浅色/深色/跟随系统，也没有强调色切换。
 - **自动刷新**：30 秒 / 60 秒 / 5 分钟 / 关闭。
 - **系统托盘**：显示托盘图标、悬停电量卡片；这两个开关和任务栏电量条、高对比度都使用 iPhone 风格拨动开关。
 - **关闭窗口时**：每次询问 / 关闭到托盘 / 直接退出；询问弹窗可勾选「记住我的选择」，并同步回设置页。
 - **任务栏电量条**：实验性功能，开关打开后自动工作。徽标居中且左侧有空间时，在空白区显示少量设备电量；徽标靠左、全屏或空间不足时自动隐藏。
-- **高对比度状态栏**：默认使用深色圆角条、白色设备名和高亮电量，浅色/深色任务栏都清楚；可以在设置里关闭，关闭后跟随应用主题。
+- **高对比度状态栏**：默认使用深色圆角条、白色设备名和高亮电量；可以在设置里关闭，关闭后使用固定的浅色玻璃条。
 - **任务栏状态颜色**：正常 / 偏低 / 过低三档颜色可以单独修改，只影响任务栏电量条，不改变托盘电池图标。
 
 ![任务栏电量条](assets/screenshot-taskbar.png)
@@ -73,11 +73,13 @@ Windows 10/11 · .NET Framework 4.8 · 单文件 · 本地读取，不联网
 任务栏条是独立的置顶、点击穿透窗口，不注入 Explorer，也不是真正的任务栏子窗口；因此窗口布局变化时会在 3 秒内自动跟随。徽标靠左时目前采用安全隐藏，不覆盖应用按钮；后续可以用更可靠的任务栏按钮边界实现右侧放置。
 - **工具**：打开文件夹、打开日志、实时日志、托盘帮助、以管理员身份重启、退出程序。
 
-![浅色主题](assets/screenshot-light.png)
+![设备清单](assets/qiju-devices.png)
 
 ## 设备适配
 
 「设备适配」页用于为尚未内置协议、但能确认查询报文的厂商 HID 设备增加电量读取：
+
+![设备适配](assets/qiju-profiles.png)
 
 - 从已连接接口生成草稿，自动填写 VID/PID、Usage 和三个报告长度
 - 支持 `output`、`feature`、`featureQuery`、`input` 四种读取方式
@@ -166,8 +168,6 @@ Windows 10/11 · .NET Framework 4.8 · 单文件 · 本地读取，不联网
 - 设备休眠时先按键唤醒；接收器在线但设备未唤醒不会返回电量。
 - 配置错误不会破坏已有内置协议；删除用户配置后会恢复同 id 的随附配置。
 
-![深色主题](assets/screenshot-dark.png)
-
 ## 托盘与后台
 
 开启托盘后，关闭主窗口程序不会退出，而是留在系统托盘继续刷新：
@@ -185,9 +185,7 @@ Windows 10/11 · .NET Framework 4.8 · 单文件 · 本地读取，不联网
 
 > 预览图为放大效果；实际 16px 图标只显示电池条，百分比数字在 150% 以上缩放时才出现。
 
-右键托盘不再使用 Windows 默认菜单，而是同风格的自绘卡片菜单：
-
-![托盘右键菜单](assets/screenshot-tray-menu.png)
+右键托盘不再使用 Windows 默认菜单，而是同风格的自绘卡片菜单（暖米白卡片、圆角 22 与柔和投影，设备行沿用 Qiju 排版）。
 
 鼠标在托盘图标上停留约 0.5 秒，会显示自绘悬浮卡片，列出全部设备、状态和电量；移开或点击后自动消失。
 
@@ -273,7 +271,6 @@ exe 未签名，可能触发 SmartScreen。点「更多信息 → 仍要运行�
 ```text
 GearPower.exe                 正常启动
 GearPower.exe --demo          用示例数据预览界面（不访问硬件）
-GearPower.exe --demo --dark   以深色主题预览（--light 为浅色）
 GearPower.exe --selftest      运行协议解析自检，写 %LOCALAPPDATA%\GearPower\logs\selftest.log
 GearPower.exe --dump          生成 hid-dump.txt（%LOCALAPPDATA%\GearPower\logs）
 GearPower.exe --tray-preview  生成托盘电池预览图
@@ -285,7 +282,7 @@ GearPower.exe --tray-preview  生成托盘电池预览图
 
 ## 构建
 
-当前版本：**1.3.0**。需要 Windows 10/11 自带的 .NET Framework 4.8 与 `csc.exe`（无需 Visual Studio / .NET SDK）。
+当前版本：**2.0.0**。需要 Windows 10/11 自带的 .NET Framework 4.8 与 `csc.exe`（无需 Visual Studio / .NET SDK）。
 
 ```powershell
 git clone https://github.com/XAVIER0229/GearPower.git
@@ -319,7 +316,7 @@ src/
   DeviceAgentPrompt.cs 复制给 Agent 的提示词
   RecentLogBuffer.cs 最近 1000 行日志缓冲
   LogWindow.cs      实时日志窗口
-  MainWindow.cs     WPF 界面逻辑、自绘标题栏与主题菜单
+  MainWindow.cs     WPF 界面逻辑、自绘标题栏与视图切换
   BatteryRing.cs    环形电量控件
   BatteryCache.cs   休眠设备的上次电量缓存
   DeviceHistory.cs  连接过本机的设备历史与删除
@@ -330,8 +327,8 @@ src/
   ElevationPromptWindow.cs 低权限提权弹窗
   TaskbarWidget.cs  任务栏左侧电量条与检测
   TaskbarTheme.cs   任务栏明暗检测（电池描边对比）
-  Theme.cs          当前主题的颜色/字体门面
-  ThemeManager.cs   浅色/深色/跟随系统与标题栏切换
+  Theme.cs          Qiju Soft UI 颜色/字体门面
+  ThemeManager.cs   单一浅色 Qiju 调色板与标题栏
   SelfTest.cs       协议解析自检
   Dump.cs           HID 诊断导出
   AssemblyInfo.cs   版本与文件属性
@@ -385,7 +382,7 @@ Razer、ASUS ROG、HyperX、ATK、VXE、Lamzu、Logitech 等名称和商标归�
 
 ## 版本
 
-当前公开版本 **1.3.0**，变更见 [CHANGELOG.md](CHANGELOG.md)。当前发布说明见 [docs/releases](docs/releases/)，历史版本折叠归档在 [docs/releases/archive](docs/releases/archive/)。
+当前公开版本 **2.0.0**，变更见 [CHANGELOG.md](CHANGELOG.md)。当前发布说明见 [docs/releases](docs/releases/)，历史版本折叠归档在 [docs/releases/archive](docs/releases/archive/)。
 
 ## License
 

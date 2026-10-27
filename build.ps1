@@ -56,6 +56,7 @@ Copy-Item (Join-Path $root "SECURITY.md") $dist -Force
 Copy-Item (Join-Path $root "CHANGELOG.md") $dist -Force
 Copy-Item (Join-Path $root "docs\DEVICE_PROFILES.md") $dist -Force
 Copy-Item (Join-Path $root "docs\DEVICE_ADAPTERS.md") $dist -Force
+Copy-Item (Join-Path $root "docs\QIJU_UI.md") $dist -Force
 Copy-Item (Join-Path $root "docs\PATCH_NOTES.md") $dist -Force
 Get-ChildItem $dist -Filter "RELEASE_NOTES_*.md" -File | Remove-Item -Force -ErrorAction SilentlyContinue
 Get-ChildItem (Join-Path $root "docs\releases") -Filter "RELEASE_NOTES_*.md" -File |

@@ -32,18 +32,19 @@ namespace GearPower
             DeviceReading primary = TrayIconRenderer.Primary(data);
 
             var card = new Border();
-            card.Width = 320;
+            card.Width = 328;
             card.Background = Theme.Panel;
-            card.BorderBrush = Theme.PanelBorder;
+            card.BorderBrush = Theme.CardBorder;
             card.BorderThickness = new Thickness(1);
-            card.CornerRadius = new CornerRadius(14);
-            card.Padding = new Thickness(6);
+            card.CornerRadius = new CornerRadius(22);
+            card.Padding = new Thickness(8);
             card.Effect = new DropShadowEffect
             {
-                BlurRadius = 26,
-                ShadowDepth = 8,
-                Opacity = 0.36,
-                Color = Colors.Black
+                BlurRadius = 32,
+                ShadowDepth = 12,
+                Direction = 45,
+                Opacity = 0.24,
+                Color = Color.FromRgb(0xD6, 0xC8, 0xBD)
             };
             TextOptions.SetTextFormattingMode(card, TextFormattingMode.Display);
             TextOptions.SetTextRenderingMode(card, TextRenderingMode.ClearType);

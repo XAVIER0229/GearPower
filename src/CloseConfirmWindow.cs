@@ -27,18 +27,19 @@ namespace GearPower
             bool rememberChoice = false;
 
             var card = new Border();
-            card.Width = 420;
+            card.Width = 440;
             card.Background = Theme.Panel;
-            card.BorderBrush = Theme.PanelBorder;
+            card.BorderBrush = Theme.CardBorder;
             card.BorderThickness = new Thickness(1);
-            card.CornerRadius = new CornerRadius(14);
-            card.Padding = new Thickness(22);
+            card.CornerRadius = new CornerRadius(28);
+            card.Padding = new Thickness(28);
             card.Effect = new DropShadowEffect
             {
-                BlurRadius = 28,
-                ShadowDepth = 8,
-                Opacity = 0.36,
-                Color = Colors.Black
+                BlurRadius = 34,
+                ShadowDepth = 12,
+                Opacity = 0.26,
+                Direction = 45,
+                Color = Color.FromRgb(0xD6, 0xC8, 0xBD)
             };
             TextOptions.SetTextFormattingMode(card, TextFormattingMode.Display);
 
@@ -47,7 +48,7 @@ namespace GearPower
             var title = new TextBlock();
             title.Text = "关闭 GearPower";
             title.FontFamily = Theme.UiFont;
-            title.FontSize = 15;
+            title.FontSize = 20;
             title.FontWeight = FontWeights.SemiBold;
             title.Foreground = Theme.Text;
             root.Children.Add(title);
@@ -55,18 +56,18 @@ namespace GearPower
             var message = new TextBlock();
             message.Text = "关闭主窗口后，GearPower 可以继续在系统托盘运行，也可以完全退出。";
             message.FontFamily = Theme.UiFont;
-            message.FontSize = 11;
+            message.FontSize = 11.5;
             message.Foreground = Theme.Secondary;
             message.TextWrapping = TextWrapping.Wrap;
-            message.Margin = new Thickness(0, 8, 0, 0);
+            message.Margin = new Thickness(0, 10, 0, 0);
             root.Children.Add(message);
 
             var rememberBox = new CheckBox();
             rememberBox.Content = "记住我的选择，下次不再询问";
             rememberBox.FontFamily = Theme.UiFont;
-            rememberBox.FontSize = 10.5;
+            rememberBox.FontSize = 11;
             rememberBox.Foreground = Theme.Text;
-            rememberBox.Margin = new Thickness(0, 16, 0, 0);
+            rememberBox.Margin = new Thickness(0, 18, 0, 0);
             root.Children.Add(rememberBox);
 
             var buttons = new StackPanel();
@@ -96,9 +97,6 @@ namespace GearPower
 
             var tray = MakeButton(owner, "关闭到托盘", "PrimaryButton");
             tray.Margin = new Thickness(8, 0, 0, 0);
-            tray.Background = Theme.Accent;
-            tray.Foreground = Brushes.White;
-            tray.BorderBrush = Theme.Accent;
             tray.FontWeight = FontWeights.SemiBold;
             tray.Click += (s, e) =>
             {
@@ -158,9 +156,10 @@ namespace GearPower
             var button = new Button();
             button.Content = text;
             button.MinWidth = 88;
-            button.Padding = new Thickness(14, 7, 14, 7);
+            button.Height = 40;
+            button.Padding = new Thickness(16, 7, 16, 7);
             button.FontFamily = Theme.UiFont;
-            button.FontSize = 10.5;
+            button.FontSize = 11;
             try
             {
                 Style style = owner.TryFindResource(styleKey) as Style;

@@ -4,17 +4,15 @@
 
 ## 当前版本
 
-- [GearPower v1.3.0](RELEASE_NOTES_v1.3.0.md) — 整套 Soft UI 侧栏布局
+- [GearPower v2.0.0](RELEASE_NOTES_v2.0.0.md) — Qiju Soft UI 完整重制
 
 ## 历史版本
 
 <details>
-<summary>展开查看 v1.1.x – v1.2.9 的历史发布说明</summary>
+<summary>展开查看 v1.1.x – v1.2.7 的历史发布说明</summary>
 
 | 版本 | 类型 | 说明 |
 | --- | --- | --- |
-| [v1.2.9](archive/RELEASE_NOTES_v1.2.9.md) | 正式版 | 新拟物菜单键帽与滑动开关 |
-| [v1.2.8](archive/RELEASE_NOTES_v1.2.8.md) | 正式版 | 开机自启动与首次功能引导 |
 | [v1.2.7](archive/RELEASE_NOTES_v1.2.7.md) | 正式版 | 设备名称自定义 |
 | [v1.2.6](archive/RELEASE_NOTES_v1.2.6.md) | 正式版 | Flydigi Vader 5 Pro 控制器适配 |
 | [v1.2.5](archive/RELEASE_NOTES_v1.2.5.md) | 正式版 | 首页蓝牙设备电量开关 |

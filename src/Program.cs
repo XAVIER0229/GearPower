@@ -89,11 +89,6 @@ namespace GearPower
             SingleInstance.Listen(() => controller.ActivateFromSecondInstance());
             app.SessionEnding += (s, e) => controller.PrepareSystemExit();
 
-            if (args != null && args.Any(a => string.Equals(a, "--dark", StringComparison.OrdinalIgnoreCase)))
-                ThemeManager.SetMode(ThemeMode.Dark, false);
-            else if (args != null && args.Any(a => string.Equals(a, "--light", StringComparison.OrdinalIgnoreCase)))
-                ThemeManager.SetMode(ThemeMode.Light, false);
-
             try
             {
                 app.Run(window);
