@@ -173,16 +173,14 @@
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="ToggleButton">
-            <Grid Width="58" Height="28" Background="Transparent">
-              <Border x:Name="Track" Width="48" Height="28" CornerRadius="14"
-                      HorizontalAlignment="Left"
-                      Background="{DynamicResource InputBrush}"
-                      BorderBrush="{DynamicResource OptionBorderBrush}" BorderThickness="1">
+            <Grid Width="50" Height="28" Background="Transparent">
+              <Border x:Name="Track" Width="50" Height="28" CornerRadius="14"
+                      Background="{DynamicResource PanelBrush}" BorderThickness="0">
                 <Grid>
                   <Border x:Name="TrackInset" CornerRadius="14" Opacity="0.55" IsHitTestVisible="False">
                     <Border.Background>
                       <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#66D6C8BD" Offset="0"/>
+                        <GradientStop Color="#55D6C8BD" Offset="0"/>
                         <GradientStop Color="#22D6C8BD" Offset="0.42"/>
                         <GradientStop Color="#00FFFFFF" Offset="0.68"/>
                         <GradientStop Color="#88FFFFFF" Offset="1"/>
@@ -191,35 +189,34 @@
                   </Border>
                 </Grid>
               </Border>
-              <Ellipse x:Name="Led" Width="5" Height="5" Fill="{DynamicResource SwitchOnBrush}"
-                       HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,1,0"
-                       Opacity="0.25">
-                <Ellipse.Effect>
-                  <DropShadowEffect Color="#2F4BD0" BlurRadius="6" ShadowDepth="0" Opacity="0.55"/>
-                </Ellipse.Effect>
-              </Ellipse>
               <Border x:Name="Knob" Width="22" Height="22" CornerRadius="11"
-                      Background="{DynamicResource SwitchKnobBrush}" HorizontalAlignment="Left"
+                      Background="{DynamicResource PanelBrush}" HorizontalAlignment="Left"
                       VerticalAlignment="Center" Margin="3,0,0,0">
                 <Border.RenderTransform>
                   <TranslateTransform x:Name="KnobShift" X="0"/>
                 </Border.RenderTransform>
                 <Border.Effect>
-                  <DropShadowEffect BlurRadius="7" ShadowDepth="2" Direction="45"
-                                    Opacity="0.32" Color="#000000"/>
+                  <DropShadowEffect BlurRadius="5" ShadowDepth="2" Direction="45"
+                                    Opacity="0.55" Color="#D6C8BD"/>
                 </Border.Effect>
+                <Ellipse x:Name="Led" Width="5" Height="5" Fill="{DynamicResource SwitchOnBrush}"
+                         HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0">
+                  <Ellipse.Effect>
+                    <DropShadowEffect Color="#2F4BD0" BlurRadius="5" ShadowDepth="0" Opacity="0.55"/>
+                  </Ellipse.Effect>
+                </Ellipse>
               </Border>
             </Grid>
             <ControlTemplate.Triggers>
               <Trigger Property="IsChecked" Value="True">
-                <Setter TargetName="Track" Property="BorderBrush" Value="{DynamicResource SwitchOnBrush}"/>
-                <Setter TargetName="Knob" Property="Background" Value="{DynamicResource SwitchOnBrush}"/>
+                <Setter TargetName="Track" Property="Background" Value="#0E2F4BD0"/>
+                
                 <Setter TargetName="Led" Property="Opacity" Value="1"/>
                 <Trigger.EnterActions>
                   <BeginStoryboard>
                     <Storyboard>
                       <DoubleAnimation Storyboard.TargetName="KnobShift"
-                                       Storyboard.TargetProperty="X" To="20"
+                                       Storyboard.TargetProperty="X" To="22"
                                        Duration="0:0:0.24">
                         <DoubleAnimation.EasingFunction>
                           <BackEase EasingMode="EaseOut" Amplitude="0.32"/>
@@ -496,20 +493,25 @@
     </Grid>
 
     <!-- Sidebar + Main -->
-    <Grid Grid.Row="1">
+    <Grid Grid.Row="1" Margin="24,24,24,0">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="250"/>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
 
-      <Border Grid.Column="0">
+      <Border Grid.Column="0" Background="{DynamicResource PanelBrush}" BorderBrush="#4DFFFFFF"
+              BorderThickness="1" CornerRadius="24">
+        <Border.Effect>
+          <DropShadowEffect Color="#D6C8BD" BlurRadius="24" ShadowDepth="11"
+                            Direction="45" Opacity="0.62"/>
+        </Border.Effect>
         <Grid>
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
           </Grid.RowDefinitions>
-          <StackPanel Grid.Row="0" Margin="24,24,18,0">
+          <StackPanel Grid.Row="0" Margin="16,22,14,0">
             <Border Width="44" Height="44" CornerRadius="14" Background="{DynamicResource PanelBrush}"
                     HorizontalAlignment="Left" Margin="0,0,0,12">
               <Border.Effect>
@@ -526,7 +528,7 @@
             <TextBlock Text="WORKSPACE" FontFamily="Bahnschrift" FontSize="9.5" FontWeight="SemiBold"
                        Foreground="{DynamicResource TextMutedBrush}" Margin="1,32,0,4"/>
             <Button x:Name="BatteryTab" Style="{StaticResource NeumorphicTabButton}"
-                    Width="200" Height="44" HorizontalContentAlignment="Left" Padding="16,0"
+                    Width="216" Height="44" HorizontalContentAlignment="Left" Padding="16,0"
                     Foreground="{DynamicResource TabActiveForegroundBrush}" Margin="0,6,0,0">
               <StackPanel Orientation="Horizontal">
                 <TextBlock Text="&#xE83F;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
@@ -534,7 +536,7 @@
               </StackPanel>
             </Button>
             <Button x:Name="DeviceTab" Style="{StaticResource NeumorphicTabButton}"
-                    Width="200" Height="44" HorizontalContentAlignment="Left" Padding="16,0"
+                    Width="216" Height="44" HorizontalContentAlignment="Left" Padding="16,0"
                     Foreground="{DynamicResource TabInactiveForegroundBrush}" Margin="0,8,0,0">
               <StackPanel Orientation="Horizontal">
                 <TextBlock Text="&#xE8FD;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
@@ -542,7 +544,7 @@
               </StackPanel>
             </Button>
             <Button x:Name="ProfileTab" Style="{StaticResource NeumorphicTabButton}"
-                    Width="200" Height="44" HorizontalContentAlignment="Left" Padding="16,0"
+                    Width="216" Height="44" HorizontalContentAlignment="Left" Padding="16,0"
                     Foreground="{DynamicResource TabInactiveForegroundBrush}" Margin="0,8,0,0">
               <StackPanel Orientation="Horizontal">
                 <TextBlock Text="&#xE90F;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
@@ -550,7 +552,7 @@
               </StackPanel>
             </Button>
             <Button x:Name="SettingsTab" Style="{StaticResource NeumorphicTabButton}"
-                    Width="200" Height="44" HorizontalContentAlignment="Left" Padding="16,0"
+                    Width="216" Height="44" HorizontalContentAlignment="Left" Padding="16,0"
                     Foreground="{DynamicResource TabInactiveForegroundBrush}" Margin="0,8,0,0">
               <StackPanel Orientation="Horizontal">
                 <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
@@ -572,7 +574,7 @@
         </Grid>
       </Border>
 
-      <Grid Grid.Column="1" Margin="30,24,24,0">
+      <Grid Grid.Column="1" Margin="30,0,0,0">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
@@ -971,7 +973,7 @@
     </Grid>
 
     <!-- Footer -->
-    <Grid Grid.Row="2" Margin="40,0,40,16">
+    <Grid Grid.Row="2" Margin="24,0,24,16">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="Auto"/>

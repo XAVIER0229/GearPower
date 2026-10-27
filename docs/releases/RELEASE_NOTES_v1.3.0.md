@@ -4,9 +4,11 @@
 
 ## 新布局
 
-- 参考 `neumorph-console` 的 HTML/CSS 与 `docs/design-tokens.json`：左侧固定导航 + 右侧工作台
-- 采用 tokens 的 250px 侧栏、24px 页面间距、24px 卡片圆角、16px 控件圆角
+- 参考 `neumorph-console/docs/Qiju-SoftUI-UI-Spec-v1.0.docx/.pdf`
+- 参考 `neumorph-console/docs/design-tokens.json`
+- 采用 250px 侧栏、24px 页面外边距、30px 侧栏/主区间距、24px 卡片圆角、16px 控件圆角
 - 采用 tokens 的卡片/按钮/凹陷阴影参数与 225°/45° 光影方向
+- 侧栏改为带 1px 白色表面边和 sh-card 阴影的独立卡片
 - 导航未选中项保持平整，当前项为内凹胶囊 + 钴蓝指示灯
 - 右侧顶部为页面标题和说明，下面才是扫描状态
 - 电量卡片按内容区宽度自适应
@@ -45,7 +47,7 @@
 SHA256：
 
 ```text
-3ac68dfd6080728319d347f61bf647de07203177d6625d67482f9f0381cfb4ae
+5850b726c080b1f1ad803cb63f32cb906531146450cfc275148d3e408add8363
 ```
 
 文件大小：`407,040` 字节
