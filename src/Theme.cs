@@ -6,7 +6,8 @@ namespace GearPower
 {
     public static class Theme
     {
-        public static readonly FontFamily UiFont = new FontFamily("Bahnschrift");
+        public static readonly FontFamily UiFont = new FontFamily("Microsoft YaHei UI");
+        public static readonly FontFamily LabelFont = new FontFamily("Bahnschrift");
         public static readonly FontFamily NumberFont = new FontFamily("Consolas");
         public static readonly FontFamily IconFont = new FontFamily("Segoe MDL2 Assets");
 
@@ -114,7 +115,7 @@ namespace GearPower
         {
             if (charging) return KeyAccentColor;
             if (!percent.HasValue) return MutedColor;
-            if (percent.Value <= 15) return DangerColor;
+            if (percent.Value <= 15) return WarnColor;
             if (percent.Value <= 35) return WarnColor;
             return KeyAccentColor;
         }

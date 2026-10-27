@@ -137,10 +137,10 @@
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="14" Padding="{TemplateBinding Padding}">
+                    CornerRadius="16" Padding="{TemplateBinding Padding}">
               <Border.Effect>
-                <DropShadowEffect Color="#BFAE9F" BlurRadius="14" ShadowDepth="4"
-                                  Direction="45" Opacity="0.55"/>
+                <DropShadowEffect Color="#D6C8BD" BlurRadius="8" ShadowDepth="3"
+                                  Direction="45" Opacity="0.9"/>
               </Border.Effect>
               <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Border>
@@ -498,7 +498,7 @@
     <!-- Sidebar + Main -->
     <Grid Grid.Row="1">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="236"/>
+        <ColumnDefinition Width="250"/>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
 
@@ -521,12 +521,12 @@
                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Border>
             <TextBlock Text="GearPower" FontSize="24" FontWeight="SemiBold"/>
-            <TextBlock Text="SOFT UI" FontSize="9" Foreground="{DynamicResource TextMutedBrush}"
+            <TextBlock Text="SOFT UI" FontFamily="Bahnschrift" FontSize="9" Foreground="{DynamicResource TextMutedBrush}"
                        Margin="1,2,0,0"/>
-            <TextBlock Text="WORKSPACE" FontSize="9.5" FontWeight="SemiBold"
+            <TextBlock Text="WORKSPACE" FontFamily="Bahnschrift" FontSize="9.5" FontWeight="SemiBold"
                        Foreground="{DynamicResource TextMutedBrush}" Margin="1,32,0,4"/>
             <Button x:Name="BatteryTab" Style="{StaticResource NeumorphicTabButton}"
-                    Width="190" Height="46" HorizontalContentAlignment="Left" Padding="16,0"
+                    Width="200" Height="44" HorizontalContentAlignment="Left" Padding="16,0"
                     Foreground="{DynamicResource TabActiveForegroundBrush}" Margin="0,6,0,0">
               <StackPanel Orientation="Horizontal">
                 <TextBlock Text="&#xE83F;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
@@ -534,7 +534,7 @@
               </StackPanel>
             </Button>
             <Button x:Name="DeviceTab" Style="{StaticResource NeumorphicTabButton}"
-                    Width="190" Height="46" HorizontalContentAlignment="Left" Padding="16,0"
+                    Width="200" Height="44" HorizontalContentAlignment="Left" Padding="16,0"
                     Foreground="{DynamicResource TabInactiveForegroundBrush}" Margin="0,8,0,0">
               <StackPanel Orientation="Horizontal">
                 <TextBlock Text="&#xE8FD;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
@@ -542,7 +542,7 @@
               </StackPanel>
             </Button>
             <Button x:Name="ProfileTab" Style="{StaticResource NeumorphicTabButton}"
-                    Width="190" Height="46" HorizontalContentAlignment="Left" Padding="16,0"
+                    Width="200" Height="44" HorizontalContentAlignment="Left" Padding="16,0"
                     Foreground="{DynamicResource TabInactiveForegroundBrush}" Margin="0,8,0,0">
               <StackPanel Orientation="Horizontal">
                 <TextBlock Text="&#xE90F;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
@@ -550,7 +550,7 @@
               </StackPanel>
             </Button>
             <Button x:Name="SettingsTab" Style="{StaticResource NeumorphicTabButton}"
-                    Width="190" Height="46" HorizontalContentAlignment="Left" Padding="16,0"
+                    Width="200" Height="44" HorizontalContentAlignment="Left" Padding="16,0"
                     Foreground="{DynamicResource TabInactiveForegroundBrush}" Margin="0,8,0,0">
               <StackPanel Orientation="Horizontal">
                 <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center"/>
@@ -572,7 +572,7 @@
         </Grid>
       </Border>
 
-      <Grid Grid.Column="1" Margin="32,22,36,0">
+      <Grid Grid.Column="1" Margin="30,24,24,0">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
@@ -585,7 +585,7 @@
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-          <TextBlock Text="GEARPOWER / BATTERY" FontSize="9" Foreground="{DynamicResource TextMutedBrush}"/>
+          <TextBlock Text="GEARPOWER / BATTERY" FontFamily="Bahnschrift" FontSize="9" Foreground="{DynamicResource TextMutedBrush}"/>
           <TextBlock Text="设备电量" FontSize="30" FontWeight="SemiBold" Margin="0,5,0,0"/>
           <TextBlock Text="无线外设状态，一屏掌握。" FontSize="11.5"
                      Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,0"/>

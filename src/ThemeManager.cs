@@ -414,13 +414,13 @@ namespace GearPower
             AddColor(d, "AccentBrush", "#2F4BD0");
             AddColor(d, "AccentDimBrush", "#E3E6F8");
             AddColor(d, "WarnBrush", "#E2552D");
-            AddColor(d, "DangerBrush", "#C9401E");
+            AddColor(d, "DangerBrush", "#B63C1C");
             AddColor(d, "InfoBrush", "#2F4BD0");
             AddColor(d, "PanelBrush", "#F2E8E0");
-            AddColor(d, "PanelBorderBrush", "#00F2E8E0");
+            AddColor(d, "PanelBorderBrush", "#4DFFFFFF");
             AddColor(d, "OptionBorderBrush", "#D8CABF");
             AddColor(d, "OptionSelectedBorderBrush", "#2F4BD0");
-            AddColor(d, "CardBorderBrush", "#00F2E8E0");
+            AddColor(d, "CardBorderBrush", "#4DFFFFFF");
             AddGradient(d, "CardBackgroundBrush", "#F7EEE7", "#F0E5DB", null);
             AddGradient(d, "CardHoverBackgroundBrush", "#FAF2EC", "#EFE3D8", null);
             AddColor(d, "TrackBrush", "#E3D6CB");
@@ -438,7 +438,7 @@ namespace GearPower
             AddColor(d, "SwitchBorderBrush", "#D8CABF");
             AddColor(d, "SwitchKnobBrush", "#FFFDFC");
             AddColor(d, "SummaryBrush", "#F2E8E0");
-            AddColor(d, "SummaryBorderBrush", "#00F2E8E0");
+            AddColor(d, "SummaryBorderBrush", "#4DFFFFFF");
             AddColor(d, "InputBrush", "#EDE2D8");
             AddColor(d, "InputBorderBrush", "#D8CABF");
             AddColor(d, "RowBorderBrush", "#E6D9CE");
@@ -461,7 +461,7 @@ namespace GearPower
             AddColor(d, "PrimaryButtonForegroundBrush", "#FFFFFF");
             AddColor(d, "PrimaryButtonHoverBrush", "#263DAE");
             AddColor(d, "PrimaryButtonPressedBrush", "#1F338F");
-            AddColor(d, "DividerBrush", "#DED0C4");
+            AddColor(d, "DividerBrush", "#246E655E");
             AddColor(d, "RefreshGlyphBrush", "#6E655E");
             return d;
         }

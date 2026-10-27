@@ -1415,7 +1415,7 @@ namespace GearPower
             card.CornerRadius = new CornerRadius(24);
             card.Background = Theme.CardBackground;
             card.BorderBrush = Theme.CardBorder;
-            card.BorderThickness = new Thickness(0);
+            card.BorderThickness = new Thickness(1);
             card.Margin = new Thickness(0);
             card.ToolTip = BuildCardTooltip(reading);
             ToolTipService.SetInitialShowDelay(card, 350);
@@ -1684,10 +1684,10 @@ namespace GearPower
             highlight.Effect = new DropShadowEffect
             {
                 Color = ThemeManager.IsDark ? Color.FromRgb(0x3A, 0x34, 0x2E) : Colors.White,
-                BlurRadius = 14,
-                ShadowDepth = 6,
+                BlurRadius = 22,
+                ShadowDepth = 9,
                 Direction = 225,
-                Opacity = ThemeManager.IsDark ? 0.35 : 0.95
+                Opacity = ThemeManager.IsDark ? 0.35 : 0.78
             };
 
             var shadow = new Border();
@@ -1697,10 +1697,10 @@ namespace GearPower
             shadow.Effect = new DropShadowEffect
             {
                 Color = ThemeManager.IsDark ? Color.FromRgb(0x05, 0x04, 0x03) : Color.FromRgb(0xD6, 0xC8, 0xBD),
-                BlurRadius = 14,
-                ShadowDepth = 6,
+                BlurRadius = 24,
+                ShadowDepth = 11,
                 Direction = 45,
-                Opacity = ThemeManager.IsDark ? 0.85 : 0.95
+                Opacity = ThemeManager.IsDark ? 0.85 : 0.62
             };
 
             card.Width = double.NaN;
