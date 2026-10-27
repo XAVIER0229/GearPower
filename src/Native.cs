@@ -844,6 +844,8 @@ namespace GearPower
             var result = new List<BluetoothBatteryInfo>();
             var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var deviceNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var deviceAddresses = new Dictionary<string, ulong>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<ulong, bool> connections = BluetoothConnection.Snapshot();
             // HFP battery properties can live on a System-class BTHENUM node,
             // not on the Bluetooth-class device shown in Settings.
             Guid guid = Guid.Empty;
@@ -866,8 +868,12 @@ namespace GearPower
                     string name = GetStringProperty(set, ref devInfo, NativeMethods.KeyFriendlyName);
                     string container = GetGuidProperty(set, ref devInfo, NativeMethods.KeyContainerId);
                     if (instance.StartsWith("BTHENUM\\DEV_", StringComparison.OrdinalIgnoreCase)
-                        && !string.IsNullOrEmpty(container) && !string.IsNullOrEmpty(name))
-                        deviceNames[container] = name;
+                        && !string.IsNullOrEmpty(container))
+                    {
+                        if (!string.IsNullOrEmpty(name)) deviceNames[container] = name;
+                        ulong address;
+                        if (BluetoothConnection.TryParseAddress(instance, out address)) deviceAddresses[container] = address;
+                    }
 
                     int percent;
                     if (!TryGetBattery(set, ref devInfo, out percent)) continue;
@@ -899,6 +905,9 @@ namespace GearPower
                 if (!string.IsNullOrEmpty(info.ContainerId) && deviceNames.TryGetValue(info.ContainerId, out deviceName))
                     info.Name = deviceName;
             }
+            result.RemoveAll(info => !BluetoothConnection.CanUseCachedBattery(
+                WindowsBatteryProperty.IsClassicBluetoothInstance(info.InstanceId),
+                BluetoothConnection.State(info.ContainerId, deviceAddresses, connections)));
             return result;
         }
 
@@ -971,3 +980,4 @@ namespace GearPower
         }
     }
 }
+

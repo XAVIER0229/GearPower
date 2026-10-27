@@ -29,6 +29,7 @@ namespace GearPower
         public string Id;
         public string Name;
         public string OriginalName;
+        public string HardwareId;
         public string Vendor;
         public DeviceKind Kind;
         public string Transport;
@@ -83,6 +84,7 @@ namespace GearPower
         public string Protocol;
         public string Note;
         public string ModelName;
+        public string HardwareId;
         public DeviceKind? Kind;
     }
 
@@ -363,3 +365,4 @@ namespace GearPower
         }
     }
 }
+

@@ -6,6 +6,14 @@ namespace GearPower
 {
     internal static class WindowsBatteryProperty
     {
+        internal static bool IsClassicBluetoothInstance(string instance)
+        {
+            if (string.IsNullOrEmpty(instance)) return false;
+            return instance.StartsWith("BTHENUM\\", StringComparison.OrdinalIgnoreCase)
+                || instance.StartsWith("BTHHFENUM\\", StringComparison.OrdinalIgnoreCase)
+                || instance.StartsWith("HID\\{00001124-0000-1000-8000-00805f9b34fb}", StringComparison.OrdinalIgnoreCase);
+        }
+
         internal static bool IsBluetoothInstance(string instance)
         {
             if (string.IsNullOrEmpty(instance)) return false;
@@ -48,3 +56,4 @@ namespace GearPower
         }
     }
 }
+
