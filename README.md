@@ -282,7 +282,7 @@ GearPower.exe --tray-preview  生成托盘电池预览图
 
 ## 构建
 
-当前版本：**2.0.2**。需要 Windows 10/11 自带的 .NET Framework 4.8 与 `csc.exe`（无需 Visual Studio / .NET SDK）。
+当前版本：**2.0.3**。需要 Windows 10/11 自带的 .NET Framework 4.8 与 `csc.exe`（无需 Visual Studio / .NET SDK）。
 
 ```powershell
 git clone https://github.com/XAVIER0229/GearPower.git
@@ -382,7 +382,7 @@ Razer、ASUS ROG、HyperX、ATK、VXE、Lamzu、Logitech 等名称和商标归�
 
 ## 版本
 
-当前公开版本 **2.0.2**，变更见 [CHANGELOG.md](CHANGELOG.md)。当前发布说明见 [docs/releases](docs/releases/)，历史版本折叠归档在 [docs/releases/archive](docs/releases/archive/)。
+当前公开版本 **2.0.3**，变更见 [CHANGELOG.md](CHANGELOG.md)。当前发布说明见 [docs/releases](docs/releases/)，历史版本折叠归档在 [docs/releases/archive](docs/releases/archive/)。
 
 ## License
 

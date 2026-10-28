@@ -10,8 +10,8 @@ namespace GearPower
     /// </summary>
     public static class SingleInstance
     {
-        private const string MutexName = @"Local\GearPower.SingleInstance.11";
-        private const string EventName = @"Local\GearPower.Activate.11";
+        private const string MutexName = @"Local\GearPower.SingleInstance.12";
+        private const string EventName = @"Local\GearPower.Activate.12";
 
         private static Mutex instanceMutex;
         private static EventWaitHandle activateEvent;

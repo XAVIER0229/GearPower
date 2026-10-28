@@ -66,8 +66,11 @@ namespace GearPower
         private static Dictionary<string, object> BuildQiju(bool dark)
         {
             var d = new Dictionary<string, object>();
-            d["ShadowColor"] = Parse(dark ? "#050403" : "#D6C8BD");
-            d["HighlightColor"] = Parse(dark ? "#3A332C" : "#FFFFFF");
+            d["ShadowColor"] = Parse(dark ? "#00000000" : "#D6C8BD");
+            d["HighlightColor"] = Parse(dark ? "#00000000" : "#FFFFFF");
+            d["SidebarInsetOpacity"] = dark ? 0.0 : 1.0;
+            AddColor(d, "NavInsetShade", dark ? "#00000000" : "#88A99684");
+            AddColor(d, "NavInsetLight", dark ? "#00000000" : "#77FFFFFF");
             AddGradient(d, "AppBackgroundBrush", "#F7EEE7", "#F2E8E0", "#EDE2D8");
             AddColor(d, "TextPrimaryBrush", "#23201D");
             AddColor(d, "TextSecondaryBrush", "#5F5751");

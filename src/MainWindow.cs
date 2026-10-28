@@ -34,6 +34,9 @@ namespace GearPower
         private readonly TextBlock scanTimeText;
         private readonly TextBlock kpiConnectedValue;
         private readonly TextBlock kpiAverageValue;
+        private readonly Grid kpiAverageTrack;
+        private readonly Border kpiAverageFill;
+        private double kpiAveragePercent;
         private readonly TextBlock kpiLowValue;
         private readonly TextBlock kpiHistoryValue;
         private readonly Ellipse summaryDot;
@@ -136,6 +139,9 @@ namespace GearPower
             scanTimeText = Find<TextBlock>("ScanTimeText");
             kpiConnectedValue = Find<TextBlock>("KpiConnectedValue");
             kpiAverageValue = Find<TextBlock>("KpiAverageValue");
+            kpiAverageTrack = Find<Grid>("KpiAverageTrack");
+            kpiAverageFill = Find<Border>("KpiAverageFill");
+            if (kpiAverageTrack != null) kpiAverageTrack.SizeChanged += (s, e) => UpdateAverageBar();
             kpiLowValue = Find<TextBlock>("KpiLowValue");
             kpiHistoryValue = Find<TextBlock>("KpiHistoryValue");
             summaryDot = Find<Ellipse>("SummaryDot");
@@ -198,6 +204,17 @@ namespace GearPower
             demoBadge = Find<Border>("DemoBadge");
             toast = Find<Border>("Toast");
             toastText = Find<TextBlock>("ToastText");
+            Grid summaryInset = Find<Grid>("SidebarSummaryInset");
+            if (summaryInset != null)
+            {
+                Action clipSummary = () =>
+                {
+                    summaryInset.Clip = new RectangleGeometry(
+                        new Rect(0, 0, summaryInset.ActualWidth, summaryInset.ActualHeight), 20, 20);
+                };
+                summaryInset.Loaded += (s, e) => clipSummary();
+                summaryInset.SizeChanged += (s, e) => clipSummary();
+            }
 
             refreshTimer = new DispatcherTimer();
             refreshTimer.Tick += (s, e) => { if (!scanning) Scan(); };
@@ -758,8 +775,11 @@ namespace GearPower
             if (contrast is int) taskbarHighContrast = (int)contrast != 0;
             object bluetooth = ReadSetting("BluetoothBattery");
             if (bluetooth is int) DisplaySettings.BluetoothEnabled = (int)bluetooth != 0;
-            object dark = ReadSetting("DarkTheme");
-            if (dark is int) DisplaySettings.DarkTheme = (int)dark != 0;
+            if (!DisplaySettings.DarkThemeForced)
+            {
+                object dark = ReadSetting("DarkTheme");
+                if (dark is int) DisplaySettings.DarkTheme = (int)dark != 0;
+            }
             if (darkThemeSwitch != null) darkThemeSwitch.IsChecked = DisplaySettings.DarkTheme;
             ThemeManager.SetDark(DisplaySettings.DarkTheme);
         }
@@ -909,6 +929,11 @@ namespace GearPower
             ThemeManager.SetDark(enabled);
             if (darkThemeSwitch != null) darkThemeSwitch.IsChecked = enabled;
             SaveSettings();
+            RefreshSettingsState();
+            SetTabState(batteryTab, !showingDevices && !showingSettings);
+            SetTabState(deviceTab, showingDevices);
+            SetTabState(profileTab, profileView != null && profileView.Visibility == Visibility.Visible);
+            SetTabState(settingsTab, showingSettings);
             RenderCards(lastReadings);
             RenderInventory(lastInventory);
             UpdateSummary();
@@ -1199,6 +1224,14 @@ namespace GearPower
             }
         }
 
+        private void UpdateAverageBar()
+        {
+            if (kpiAverageTrack == null || kpiAverageFill == null) return;
+            double width = kpiAverageTrack.ActualWidth;
+            if (width <= 0) return;
+            kpiAverageFill.Width = width * Math.Max(0, Math.Min(100, kpiAveragePercent)) / 100.0;
+        }
+
         private void UpdateSummary()
         {
             int connectedCount = lastConnectedReadings.Count;
@@ -1210,7 +1243,10 @@ namespace GearPower
             if (kpiAverageValue != null)
             {
                 var withLevels = lastConnectedReadings.Where(r => r.Percent.HasValue).ToList();
-                kpiAverageValue.Text = withLevels.Count == 0 ? "—" : Math.Round(withLevels.Average(r => r.Percent.Value)) + "%";
+                int average = withLevels.Count == 0 ? 0 : (int)Math.Round(withLevels.Average(r => r.Percent.Value));
+                kpiAverageValue.Text = withLevels.Count == 0 ? "—" : average + "%";
+                kpiAveragePercent = average;
+                UpdateAverageBar();
             }
             if (connectedCount == 0)
             {
@@ -1231,15 +1267,14 @@ namespace GearPower
                 return;
             }
 
-            summaryText.Text = "已发现 " + connectedCount + " 台设备";
+            summaryText.Text = "扫描完成";
             int withLevel = lastConnectedReadings.Count(r => r.Percent.HasValue);
             int asleepCount = lastConnectedReadings.Count(r => r.Asleep);
             int staleCount = lastConnectedReadings.Count(r => r.FromCache);
             if (withLevel > 1)
             {
                 int min = lastConnectedReadings.Where(r => r.Percent.HasValue).Min(r => r.Percent.Value);
-                double avg = lastConnectedReadings.Where(r => r.Percent.HasValue).Average(r => r.Percent.Value);
-                summaryDetail.Text = "最低 " + min + "% · 平均 " + Math.Round(avg) + "%";
+                summaryDetail.Text = "最低 " + min + "%";
                 if (asleepCount > 0) summaryDetail.Text += " · " + asleepCount + " 台休眠";
                 if (staleCount > 0) summaryDetail.Text += "（含上次读数）";
                 summaryDot.Fill = min <= 20 ? Theme.Danger : min <= 40 ? Theme.Warn : Theme.Accent;
@@ -1645,7 +1680,7 @@ namespace GearPower
                 BlurRadius = 22,
                 ShadowDepth = 9,
                 Direction = 225,
-                Opacity = ThemeManager.IsDark ? 0.42 : 0.78
+                Opacity = ThemeManager.IsDark ? 0.0 : 0.78
             };
 
             var shadow = new Border();
@@ -1658,7 +1693,7 @@ namespace GearPower
                 BlurRadius = 24,
                 ShadowDepth = 11,
                 Direction = 45,
-                Opacity = 0.62
+                Opacity = ThemeManager.IsDark ? 0.0 : 0.62
             };
 
             card.Width = double.NaN;
@@ -2099,7 +2134,7 @@ namespace GearPower
 
         private static void SetTabState(Button tab, bool active)
         {
-            tab.Tag = active ? "active" : null;
+            tab.Tag = active ? (ThemeManager.IsDark ? "active-dark" : "active") : null;
             tab.Foreground = active ? Theme.Accent : Theme.Secondary;
             tab.ApplyTemplate();
             Ellipse dot = tab.Template == null ? null : tab.Template.FindName("Dot", tab) as Ellipse;
