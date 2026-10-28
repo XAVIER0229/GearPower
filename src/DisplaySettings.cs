@@ -4,5 +4,6 @@ namespace GearPower
     {
         // Persisted in HKCU\Software\GearPower\BluetoothBattery.
         public static bool BluetoothEnabled = true;
+        public static bool DarkTheme = false;
     }
 }

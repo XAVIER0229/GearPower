@@ -23,6 +23,10 @@ namespace GearPower
             bool selftest = args != null && args.Any(a => string.Equals(a, "--selftest", StringComparison.OrdinalIgnoreCase));
             bool dump = args != null && args.Any(a => string.Equals(a, "--dump", StringComparison.OrdinalIgnoreCase));
             bool trayPreview = args != null && args.Any(a => string.Equals(a, "--tray-preview", StringComparison.OrdinalIgnoreCase));
+            if (args != null && args.Any(a => string.Equals(a, "--dark", StringComparison.OrdinalIgnoreCase)))
+                DisplaySettings.DarkTheme = true;
+            if (args != null && args.Any(a => string.Equals(a, "--light", StringComparison.OrdinalIgnoreCase)))
+                DisplaySettings.DarkTheme = false;
 
             if (!selftest && !dump && !trayPreview)
             {

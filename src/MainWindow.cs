@@ -67,6 +67,8 @@ namespace GearPower
         private readonly ToggleButton hoverEnabledSwitch;
         private readonly ToggleButton bluetoothEnabledSwitch;
         private readonly ToggleButton autoStartSwitch;
+        private readonly ToggleButton darkThemeSwitch;
+        private readonly TextBlock aboutVersionText;
         private readonly Button guideButton;
         private readonly Button closeAskOption;
         private readonly Button closeTrayOption;
@@ -166,6 +168,13 @@ namespace GearPower
             hoverEnabledSwitch = Find<ToggleButton>("HoverEnabledSwitch");
             bluetoothEnabledSwitch = Find<ToggleButton>("BluetoothEnabledSwitch");
             autoStartSwitch = Find<ToggleButton>("AutoStartSwitch");
+            darkThemeSwitch = Find<ToggleButton>("DarkThemeSwitch");
+            aboutVersionText = Find<TextBlock>("AboutVersionText");
+            if (aboutVersionText != null)
+            {
+                Version version = typeof(UiController).Assembly.GetName().Version;
+                aboutVersionText.Text = "GearPower " + version.Major + "." + version.Minor + "." + version.Build;
+            }
             guideButton = Find<Button>("GuideButton");
             closeAskOption = Find<Button>("CloseAskOption");
             closeTrayOption = Find<Button>("CloseTrayOption");
@@ -225,6 +234,7 @@ namespace GearPower
             hoverEnabledSwitch.Click += (s, e) => SetHoverEnabled(hoverEnabledSwitch.IsChecked == true);
             bluetoothEnabledSwitch.Click += (s, e) => SetBluetoothEnabled(bluetoothEnabledSwitch.IsChecked == true);
             autoStartSwitch.Click += (s, e) => SetAutoStart(autoStartSwitch.IsChecked == true);
+            darkThemeSwitch.Click += (s, e) => SetDarkTheme(darkThemeSwitch.IsChecked == true);
             guideButton.Click += (s, e) => FirstRunGuide.Show(window);
             closeAskOption.Click += (s, e) => SetCloseAction(0);
             closeTrayOption.Click += (s, e) => SetCloseAction(1);
@@ -748,6 +758,10 @@ namespace GearPower
             if (contrast is int) taskbarHighContrast = (int)contrast != 0;
             object bluetooth = ReadSetting("BluetoothBattery");
             if (bluetooth is int) DisplaySettings.BluetoothEnabled = (int)bluetooth != 0;
+            object dark = ReadSetting("DarkTheme");
+            if (dark is int) DisplaySettings.DarkTheme = (int)dark != 0;
+            if (darkThemeSwitch != null) darkThemeSwitch.IsChecked = DisplaySettings.DarkTheme;
+            ThemeManager.SetDark(DisplaySettings.DarkTheme);
         }
 
         private static int ToArgb(Color color)
@@ -810,6 +824,7 @@ namespace GearPower
                         key.SetValue("TaskbarWarnColor", ToArgb(taskbarWarnColor));
                         key.SetValue("TaskbarDangerColor", ToArgb(taskbarDangerColor));
                         key.SetValue("BluetoothBattery", DisplaySettings.BluetoothEnabled ? 1 : 0);
+                        key.SetValue("DarkTheme", DisplaySettings.DarkTheme ? 1 : 0);
                         key.SetValue("TaskbarHighContrast", taskbarHighContrast ? 1 : 0);
                     }
                 }
@@ -888,6 +903,18 @@ namespace GearPower
             ShowToast(enabled ? "蓝牙设备电量显示已开启" : "蓝牙设备电量显示已关闭");
         }
 
+        private void SetDarkTheme(bool enabled)
+        {
+            DisplaySettings.DarkTheme = enabled;
+            ThemeManager.SetDark(enabled);
+            if (darkThemeSwitch != null) darkThemeSwitch.IsChecked = enabled;
+            SaveSettings();
+            RenderCards(lastReadings);
+            RenderInventory(lastInventory);
+            UpdateSummary();
+            ShowToast(enabled ? "已切换到暗色主题" : "已切换到浅色主题");
+        }
+
         private void SetAutoStart(bool enabled)
         {
             if (!AutoStart.SetEnabled(enabled))
@@ -941,6 +968,7 @@ namespace GearPower
             bluetoothEnabledSwitch.ToolTip = "读取并显示蓝牙耳机、键盘等设备的电量";
             autoStartSwitch.IsChecked = AutoStart.IsEnabled();
             autoStartSwitch.ToolTip = "登录 Windows 后正常显示主窗口、托盘和任务栏电量条";
+            if (darkThemeSwitch != null) darkThemeSwitch.IsChecked = DisplaySettings.DarkTheme;
 
             bool closeChoices = trayEnabled && !lowIntegrity;
             if (!closeChoices) closeAction = 2;
@@ -1259,6 +1287,7 @@ namespace GearPower
                 cardScroll.Visibility = empty ? Visibility.Collapsed : Visibility.Visible;
             }
             UpdateCardLayout();
+            cardScroll.ScrollToTop();
             cardScroll.Dispatcher.BeginInvoke(new Action(UpdateCardLayout));
         }
 
@@ -1612,11 +1641,11 @@ namespace GearPower
             highlight.IsHitTestVisible = false;
             highlight.Effect = new DropShadowEffect
             {
-                Color = Colors.White,
+                Color = ThemeManager.IsDark ? Color.FromRgb(0x3A, 0x33, 0x2C) : Colors.White,
                 BlurRadius = 22,
                 ShadowDepth = 9,
                 Direction = 225,
-                Opacity = 0.78
+                Opacity = ThemeManager.IsDark ? 0.42 : 0.78
             };
 
             var shadow = new Border();
@@ -1625,7 +1654,7 @@ namespace GearPower
             shadow.IsHitTestVisible = false;
             shadow.Effect = new DropShadowEffect
             {
-                Color = Color.FromRgb(0xD6, 0xC8, 0xBD),
+                Color = ThemeManager.IsDark ? Color.FromRgb(0x05, 0x04, 0x03) : Color.FromRgb(0xD6, 0xC8, 0xBD),
                 BlurRadius = 24,
                 ShadowDepth = 11,
                 Direction = 45,
@@ -1796,11 +1825,9 @@ namespace GearPower
                 categoryHeader.Margin = new Thickness(8, 12, 8, 4);
                 inventoryPanel.Children.Add(categoryHeader);
 
-                int index = 0;
                 foreach (InventoryDeviceGroup device in category.Devices)
                 {
-                    inventoryPanel.Children.Add(BuildInventoryGroup(device, index == 0));
-                    index++;
+                    inventoryPanel.Children.Add(BuildInventoryGroup(device, false));
                 }
             }
         }
